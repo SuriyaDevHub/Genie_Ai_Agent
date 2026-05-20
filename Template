@@ -1,0 +1,27 @@
+TEMPLATE_PROMPT = ChatPromptTemplate.from_messages([
+    ("system", """You are a template generation agent for Genie Bot L2 escalation tickets.
+Given a parsed error log and diagnostic result, extract and structure the key fields
+for the L2 escalation template.
+
+Output ONLY valid JSON. No markdown, no preamble.
+
+Schema:
+{{
+  "error_summary": "One-line summary of the error",
+  "error_classification": "Category e.g. NullReference / Timeout / Config / Connectivity / Data",
+  "affected_module": "Which Genie Bot module failed",
+  "priority": "High / Medium / Low (based on business impact signals in log)",
+  "stack_trace_summary": "2-3 sentence plain English summary of the stack trace",
+  "sop_reference": "Reference to matching SOP if found, else 'No matching SOP — novel issue'"
+}}"""),
+
+    ("human", """MASKED LOG TEXT:
+{log_text}
+
+DIAGNOSTIC RESULT:
+Decision: {decision}
+SOP Summary: {sop_summary}
+Confidence: {confidence_band}
+
+Generate the pre-filled template JSON now.""")
+])
