@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Genie Bot AI Copilot — Business Overview</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --ink:     #0d1b2e;
+  --ink2:    #1a2f4a;
+  --blue:    #0f5299;
+  --blue2:   #1a6fd4;
+  --sky:     #e8f2ff;
+  --green:   #0a6640;
+  --mint:    #e6f7ef;
+  --amber:   #b45309;
+  --cream:   #f7f4ef;
+  --cream2:  #f0ebe0;
+  --red:     #c0392b;
+  --rose:    #fdf0ee;
+  --rule:    #d4c9b8;
+  --muted:   #6b7a8d;
+  --white:   #ffffff;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.page {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 52px 56px 72px;
+}
+
+/* ── HEADER ── */
+.masthead {
+  border-top: 4px solid var(--blue);
+  padding-top: 28px;
+  margin-bottom: 44px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: end;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 28px;
+}
+
+.masthead-label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--blue2);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.masthead-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 38px;
+  font-weight: 800;
+  color: var(--ink);
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.masthead-sub {
+  font-size: 15px;
+  color: var(--muted);
+  font-weight: 300;
+  max-width: 560px;
+}
+
+.masthead-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 3px;
+}
+
+.badge-blue   { background: var(--sky);  color: var(--blue);  border: 1px solid #b8d4f5; }
+.badge-green  { background: var(--mint); color: var(--green); border: 1px solid #b3e0c8; }
+.badge-amber  { background: #fef3e2;     color: var(--amber); border: 1px solid #f6d8a0; }
+
+/* ── SECTION HEADER ── */
+.section-hd {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 40px 0 20px;
+}
+.section-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--rule);
+  line-height: 1;
+  min-width: 32px;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.section-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+/* ── PROBLEM / SOLUTION COMPARISON ── */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 60px 1fr;
+  gap: 0;
+  align-items: stretch;
+  margin-bottom: 32px;
+}
+
+.compare-col {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.compare-header {
+  padding: 14px 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.compare-header-before {
+  background: var(--rose);
+  color: var(--red);
+  border-bottom: 1px solid #f5c6c0;
+}
+
+.compare-header-after {
+  background: var(--mint);
+  color: var(--green);
+  border-bottom: 1px solid #b3e0c8;
+}
+
+.compare-body { padding: 20px; background: var(--white); }
+
+.compare-mid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: var(--blue2);
+  font-weight: 700;
+}
+
+.pain-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  align-items: flex-start;
+  font-size: 12px;
+  color: var(--ink2);
+}
+.pain-icon { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+
+/* ── WORKFLOW STEPS ── */
+.workflow-container { margin-bottom: 36px; }
+
+.step-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin-bottom: 0;
+  position: relative;
+}
+
+.step-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 64px;
+  flex-shrink: 0;
+}
+
+.step-num-outer {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 700;
+  z-index: 1;
+}
+
+.step-line {
+  width: 2px;
+  flex: 1;
+  min-height: 20px;
+}
+
+.step-content {
+  flex: 1;
+  padding: 0 0 28px 0;
+}
+
+.step-card {
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--white);
+}
+
+.step-card-header {
+  padding: 14px 20px 10px;
+  border-bottom: 1px solid #f0ebe0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.step-who {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.step-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-top: 2px;
+}
+
+.step-body {
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: start;
+}
+
+.step-desc {
+  font-size: 12.5px;
+  color: var(--ink2);
+  line-height: 1.65;
+}
+
+.step-aside {
+  min-width: 160px;
+  max-width: 200px;
+}
+
+.aside-box {
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-size: 11px;
+}
+
+.aside-blue  { background: var(--sky);  border: 1px solid #b8d4f5; color: var(--blue);  }
+.aside-green { background: var(--mint); border: 1px solid #b3e0c8; color: var(--green); }
+.aside-amber { background: #fef3e2;     border: 1px solid #f6d8a0; color: var(--amber); }
+.aside-red   { background: var(--rose); border: 1px solid #f5c6c0; color: var(--red);   }
+
+.aside-title { font-weight: 700; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 5px; }
+.aside-line  { display: flex; gap: 5px; margin-top: 3px; align-items: flex-start; }
+.aside-dot   { flex-shrink: 0; margin-top: 3px; }
+
+/* Step colours */
+.step-user    .step-num-outer { background: #e8f2ff;   color: var(--blue);  border: 2px solid var(--blue2); }
+.step-user    .step-line      { background: #b8d4f5; }
+.step-user    .step-who       { color: var(--blue2); }
+.step-user    .step-card      { border-color: #b8d4f5; }
+.step-user    .step-card-header { background: var(--sky); }
+
+.step-ai      .step-num-outer { background: #f0e8ff;   color: #6b21a8; border: 2px solid #9b6dff; }
+.step-ai      .step-line      { background: #d8c8f0; }
+.step-ai      .step-who       { color: #7c3aed; }
+.step-ai      .step-card      { border-color: #d8c8f0; }
+.step-ai      .step-card-header { background: #f8f4ff; }
+
+.step-hitl    .step-num-outer { background: var(--mint); color: var(--green); border: 2px solid var(--green); }
+.step-hitl    .step-line      { background: #b3e0c8; }
+.step-hitl    .step-who       { color: var(--green); }
+.step-hitl    .step-card      { border-color: #b3e0c8; border-width: 2px; }
+.step-hitl    .step-card-header { background: var(--mint); }
+
+.step-outcome .step-num-outer { background: #e8f2ff; color: var(--blue); border: 2px solid var(--blue); }
+.step-outcome .step-who       { color: var(--blue); }
+.step-outcome .step-card      { border-color: #b8d4f5; }
+.step-outcome .step-card-header { background: var(--sky); }
+
+/* HITL callout label */
+.hitl-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--green);
+  color: white;
+}
+
+/* ── BRANCH SECTION ── */
+.branch-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 0 0 28px 64px;
+}
+
+.branch-card {
+  border-radius: 8px;
+  padding: 18px 20px;
+  border: 1px solid;
+}
+
+.branch-resolved {
+  border-color: #b3e0c8;
+  background: var(--mint);
+}
+.branch-escalated {
+  border-color: #b8d4f5;
+  background: var(--sky);
+}
+
+.branch-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.branch-desc { font-size: 12px; color: var(--ink2); line-height: 1.6; }
+
+.branch-steps { margin-top: 10px; }
+.branch-step {
+  display: flex; gap: 8px; font-size: 11.5px;
+  color: var(--ink2); margin-top: 6px; align-items: flex-start;
+}
+.branch-arrow { color: var(--blue2); font-weight: 700; flex-shrink: 0; }
+
+/* ── KPI ROW ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  margin-bottom: 36px;
+}
+
+.kpi-card {
+  background: var(--white);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 18px 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.kpi-blue::before   { background: var(--blue2); }
+.kpi-green::before  { background: var(--green); }
+.kpi-amber::before  { background: var(--amber); }
+.kpi-red::before    { background: var(--red); }
+.kpi-purple::before { background: #7c3aed; }
+
+.kpi-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.kpi-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.kpi-sub { font-size: 10.5px; color: var(--muted); }
+.kpi-baseline { font-size: 10px; color: var(--red); margin-top: 4px; }
+
+/* ── GOVERNANCE ── */
+.gov-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+.gov-card {
+  background: var(--white);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 18px 20px;
+}
+
+.gov-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gov-item {
+  display: flex; gap: 8px; margin-top: 7px;
+  font-size: 12px; color: var(--ink2); line-height: 1.5;
+  align-items: flex-start;
+}
+.gov-tick { color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+/* ── TIMELINE ── */
+.timeline-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 36px;
+}
+
+.timeline-phase {
+  padding: 18px 20px;
+  border-right: 1px solid var(--rule);
+  background: var(--white);
+  position: relative;
+}
+.timeline-phase:last-child { border-right: none; }
+.timeline-phase:nth-child(even) { background: var(--cream); }
+
+.phase-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--rule);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.phase-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blue2);
+  margin-bottom: 6px;
+}
+.phase-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.phase-item {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-top: 4px;
+  padding-left: 10px;
+  border-left: 2px solid var(--rule);
+}
+.phase-timeline {
+  margin-top: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: 0.05em;
+}
+
+/* ── QUOTE BOX ── */
+.quote-box {
+  background: var(--ink);
+  color: var(--white);
+  border-radius: 8px;
+  padding: 28px 36px;
+  margin-bottom: 36px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 32px;
+}
+
+.quote-stat { text-align: center; }
+.quote-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 44px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #74b9ff, #a29bfe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+.quote-stat-label { font-size: 12px; color: #94a3b8; margin-top: 6px; }
+.quote-divider { width: 1px; background: rgba(255,255,255,0.1); }
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--rule);
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* Print-friendly */
+@media print {
+  body { background: white; }
+  .page { padding: 24px 32px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══════════════════════ MASTHEAD ══════════════════════ -->
+  <div class="masthead">
+    <div>
+      <div class="masthead-label">Corporate & Investment Banking — Middle Office</div>
+      <div class="masthead-title">Genie Bot AI Support Copilot</div>
+      <div class="masthead-sub">How Agentic AI eliminates manual support effort — from error to resolution in minutes, not hours.</div>
+    </div>
+    <div class="masthead-right">
+      <span class="badge badge-blue">AI Governance Forum Submission</span>
+      <span class="badge badge-green">CIB Middle Office · May 2026</span>
+      <span class="badge badge-amber">Ideation Phase — PoC Pending</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ THE PROBLEM ══════════════════════ -->
+  <div class="section-hd">
+    <div class="section-num">1</div>
+    <div class="section-title">The Problem We Are Solving</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-col">
+      <div class="compare-header compare-header-before">✕ &nbsp;Today — The Manual Bottleneck</div>
+      <div class="compare-body">
+        <div class="pain-item"><span class="pain-icon">⏱</span><span>User encounters an error and must <strong>manually fill in a support template</strong> — often incomplete, inconsistent, and missing key technical data.</span></div>
+        <div class="pain-item"><span class="pain-icon">🔍</span><span>L1 Support manually searches <strong>AWS S3 buckets</strong> to locate the relevant execution log for every incident — regardless of severity.</span></div>
+        <div class="pain-item"><span class="pain-icon">🎫</span><span>L2 Jira tickets are <strong>manually created</strong> with incomplete information, leading to back-and-forth with users before diagnosis even begins.</span></div>
+        <div class="pain-item"><span class="pain-icon">🔁</span><span>The <strong>same errors recur repeatedly</strong> with no systematic knowledge capture — every incident is treated as new.</span></div>
+        <div style="margin-top:16px; padding:12px 14px; background:var(--rose); border-radius:6px; border:1px solid #f5c6c0;">
+          <div style="font-size:10px;font-weight:700;color:var(--red);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">Total Mean Time to Resolution</div>
+          <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:800;color:var(--red);">65 – 125 minutes</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">per incident, consuming specialist L1 resource</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="compare-mid">→</div>
+
+    <div class="compare-col">
+      <div class="compare-header compare-header-after">✓ &nbsp;With AI Copilot — Automated & Accelerated</div>
+      <div class="compare-body">
+        <div class="pain-item"><span class="pain-icon">🤖</span><span>User clicks one button. The AI <strong>automatically retrieves the error log</strong>, analyses the problem, and presents a plain-English explanation — no template to fill.</span></div>
+        <div class="pain-item"><span class="pain-icon">⚡</span><span>AI checks <strong>all historical incidents</strong> simultaneously and identifies if this issue has been seen before — in seconds, not minutes.</span></div>
+        <div class="pain-item"><span class="pain-icon">✅</span><span>If a known fix exists, user tries it. If the bot restarts successfully, a <strong>Jira ticket is auto-created and closed</strong>. Zero L1 involvement needed.</span></div>
+        <div class="pain-item"><span class="pain-icon">📋</span><span>If escalation is needed, an <strong>L2 ticket is pre-filled with all required information</strong> — root cause, steps tried, logs attached — ready for specialist review.</span></div>
+        <div style="margin-top:16px; padding:12px 14px; background:var(--mint); border-radius:6px; border:1px solid #b3e0c8;">
+          <div style="font-size:10px;font-weight:700;color:var(--green);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px">Total Mean Time to Resolution</div>
+          <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:800;color:var(--green);">Under 15 minutes</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">projected — 80%+ reduction from current baseline</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ THE WORKFLOW ══════════════════════ -->
+  <div class="section-hd">
+    <div class="section-num">2</div>
+    <div class="section-title">How It Works — Step by Step</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="workflow-container">
+
+    <!-- STEP 1 -->
+    <div class="step-row step-user">
+      <div class="step-connector">
+        <div class="step-num-outer">1</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-card">
+          <div class="step-card-header">
+            <div>
+              <div class="step-who">👤 Business User Action</div>
+              <div class="step-title">Error Encountered — Click "Diagnose My Issue"</div>
+            </div>
+            <span class="badge badge-blue" style="font-size:9px">Takes 5 seconds</span>
+          </div>
+          <div class="step-body">
+            <div class="step-desc">
+              The Genie Bot encounters an error during its automated run. The end user — a non-technical business operations colleague — sees an error message and clicks the <strong>"Diagnose My Issue"</strong> button. They enter their User ID, the Run ID shown on screen, and their PC details. No support template to fill. No email to send. No phone call to make.
+            </div>
+            <div class="step-aside">
+              <div class="aside-box aside-blue">
+                <div class="aside-title">What user provides</div>
+                <div class="aside-line"><span class="aside-dot">·</span> User ID (login)</div>
+                <div class="aside-line"><span class="aside-dot">·</span> Run ID from error</div>
+                <div class="aside-line"><span class="aside-dot">·</span> PC name</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step-row step-ai">
+      <div class="step-connector">
+        <div class="step-num-outer">2</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-card">
+          <div class="step-card-header">
+            <div>
+              <div class="step-who">🤖 AI Agents Working Automatically</div>
+              <div class="step-title">Intelligent Analysis — Logs, History & Knowledge Base</div>
+            </div>
+            <span class="badge badge-amber" style="font-size:9px">15 – 30 seconds</span>
+          </div>
+          <div class="step-body">
+            <div class="step-desc">
+              Behind the scenes, three AI agents work simultaneously. The <strong>Log Agent</strong> automatically retrieves the full execution log from our secure cloud storage — no manual searching required. The <strong>History Agent</strong> checks whether this exact error has been raised before by any user. The <strong>Diagnosis Agent</strong> searches our AI knowledge base of resolved incidents and generates a plain-English explanation of what went wrong and what to try. All sensitive data is masked before being processed.
+            </div>
+            <div class="step-aside">
+              <div class="aside-box aside-amber">
+                <div class="aside-title">AI checks simultaneously</div>
+                <div class="aside-line"><span class="aside-dot">·</span> Error log (S3)</div>
+                <div class="aside-line"><span class="aside-dot">·</span> Open Jira tickets</div>
+                <div class="aside-line"><span class="aside-dot">·</span> 100+ past incidents</div>
+                <div class="aside-line"><span class="aside-dot">·</span> SOP knowledge base</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 — DUPLICATE CHECK OUTCOME -->
+    <div class="step-row step-ai">
+      <div class="step-connector">
+        <div class="step-num-outer">3</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-card">
+          <div class="step-card-header">
+            <div>
+              <div class="step-who">🤖 AI Smart Routing — Duplicate Prevention</div>
+              <div class="step-title">Is This Issue Already Being Worked On?</div>
+            </div>
+            <span class="badge badge-blue" style="font-size:9px">Instant</span>
+          </div>
+          <div class="step-body">
+            <div class="step-desc">
+              Before doing anything further, the AI checks whether this exact error is already being investigated. If another colleague has already reported the same issue, the user is immediately told <em>"This issue is already being investigated under ticket GBOT-1042 — you've been added as an affected user."</em> No duplicate tickets are ever created. If it is a genuinely new issue, the workflow continues.
+            </div>
+            <div class="step-aside">
+              <div class="aside-box aside-blue">
+                <div class="aside-title">Duplicate scenarios</div>
+                <div class="aside-line"><span class="aside-dot">·</span> Already raised → show ref</div>
+                <div class="aside-line"><span class="aside-dot">·</span> Same user recurring → link</div>
+                <div class="aside-line"><span class="aside-dot">·</span> Other user same error → merge</div>
+                <div class="aside-line"><span class="aside-dot">·</span> New issue → continue</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 — RESOLUTION DISPLAY -->
+    <div class="step-row step-ai">
+      <div class="step-connector">
+        <div class="step-num-outer">4</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-card">
+          <div class="step-card-header">
+            <div>
+              <div class="step-who">🤖 AI Presents Finding</div>
+              <div class="step-title">Root Cause & Suggested Fix — In Plain English</div>
+            </div>
+            <span class="badge badge-amber" style="font-size:9px">No jargon. No stack traces.</span>
+          </div>
+          <div class="step-body">
+            <div class="step-desc">
+              The AI presents its findings directly in the support screen — written for a non-technical audience. For example: <em>"The bot could not find the configuration settings for your team. This has happened before — the fix is straightforward and usually takes under a minute."</em> The AI also shows how confident it is in its diagnosis, based on how closely this matches previous incidents. If the system is not confident enough, it skips straight to escalation — it never guesses.
+            </div>
+            <div class="step-aside">
+              <div class="aside-box aside-green">
+                <div class="aside-title">AI always shows</div>
+                <div class="aside-line"><span class="aside-dot">·</span> What went wrong</div>
+                <div class="aside-line"><span class="aside-dot">·</span> Why it happened</div>
+                <div class="aside-line"><span class="aside-dot">·</span> What to try</div>
+                <div class="aside-line"><span class="aside-dot">·</span> Confidence level</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5 — HITL GATE 1 -->
+    <div class="step-row step-hitl">
+      <div class="step-connector">
+        <div class="step-num-outer">5</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-card">
+          <div class="step-card-header">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <div>
+                <div class="step-who">✋ Human Decision Point &nbsp;<span class="hitl-flag">Control Gate 1 of 2</span></div>
+                <div class="step-title">User Decides: Try the Fix, or Go Straight to Support Team</div>
+              </div>
+            </div>
+            <span class="badge badge-green" style="font-size:9px">User retains full control</span>
+          </div>
+          <div class="step-body">
+            <div class="step-desc">
+              The AI never acts without human confirmation. The user reads the suggested fix and makes a choice. They can click <strong>"Try Fix & Re-run Bot"</strong> — which applies the fix and automatically restarts the bot — or they can click <strong>"Escalate to Support Team"</strong> if they prefer not to try the fix themselves. The AI is the advisor. The human is the decision-maker.
+            </div>
+            <div class="step-aside">
+              <div class="aside-box aside-green">
+                <div class="aside-title">Two choices</div>
+                <div class="aside-line"><span class="aside-dot">✅</span> Try fix &amp; re-run</div>
+                <div class="aside-line"><span class="aside-dot">→</span> Go straight to L2</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /workflow-container -->
+
+  <!-- ── BRANCH SECTION ── -->
+  <div style="margin:0 0 8px 64px;">
+    <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">From here, the workflow branches based on outcome:</div>
+  </div>
+  <div class="branch-grid">
+    <div class="branch-card branch-resolved">
+      <div class="branch-title" style="color:var(--green)">
+        <span style="font-size:22px">✓</span> Path A — Issue Resolved
+      </div>
+      <div class="branch-desc">The bot restarts and runs successfully after applying the fix.</div>
+      <div class="branch-steps">
+        <div class="branch-step"><span class="branch-arrow">→</span>Bot restarts automatically (AI-controlled, one attempt only)</div>
+        <div class="branch-step"><span class="branch-arrow">→</span>AI confirms the run completed successfully</div>
+        <div class="branch-step"><span class="branch-arrow">→</span>Jira ticket auto-created and immediately <strong>closed as DONE</strong></div>
+        <div class="branch-step"><span class="branch-arrow">→</span>User sees: <em>"Great news — the bot is running again!"</em></div>
+        <div class="branch-step"><span class="branch-arrow">→</span>Resolution saved to AI knowledge base for future incidents</div>
+        <div class="branch-step"><span class="branch-arrow">→</span><strong>Zero L1 or L2 involvement required</strong></div>
+      </div>
+    </div>
+    <div class="branch-card branch-escalated">
+      <div class="branch-title" style="color:var(--blue)">
+        <span style="font-size:22px">→</span> Path B — Escalate to Specialist Team
+      </div>
+      <div class="branch-desc">The fix did not resolve the issue, or the user chose to escalate directly.</div>
+      <div class="branch-steps">
+        <div class="branch-step"><span class="branch-arrow">→</span>AI pre-fills the full L2 support template — all fields populated</div>
+        <div class="branch-step"><span class="branch-arrow">→</span>Template includes: root cause, what was tried, error log reference, priority</div>
+        <div class="branch-step"><span class="branch-arrow">→</span>User reviews the form, adds any extra comments they wish</div>
+        <div class="branch-step"><span class="branch-arrow">→</span><strong>User clicks Submit — the only action they take</strong></div>
+        <div class="branch-step"><span class="branch-arrow">→</span>Jira ticket auto-created as <strong>OPEN</strong>, L2 team notified immediately</div>
+        <div class="branch-step"><span class="branch-arrow">→</span>User receives ticket reference number instantly</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6 — HITL GATE 2 (in path B) -->
+  <div class="workflow-container" style="margin-top:8px">
+    <div class="step-row step-hitl">
+      <div class="step-connector">
+        <div class="step-num-outer">6</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <div class="step-card">
+          <div class="step-card-header">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <div>
+                <div class="step-who">✋ Human Decision Point &nbsp;<span class="hitl-flag">Control Gate 2 of 2</span></div>
+                <div class="step-title">User Reviews Pre-filled Ticket Before It Is Raised</div>
+              </div>
+            </div>
+            <span class="badge badge-green" style="font-size:9px">AI pre-fills. Human submits.</span>
+          </div>
+          <div class="step-body">
+            <div class="step-desc">
+              Before any formal support ticket is created, the user sees the complete pre-filled form and can review every field. They can add additional context or comments. Only when they click <strong>"Submit to Support Team"</strong> does the Jira ticket get created. The AI never raises a ticket autonomously. This ensures human accountability at every consequential action point.
+            </div>
+            <div class="step-aside">
+              <div class="aside-box aside-green">
+                <div class="aside-title">Pre-filled by AI</div>
+                <div class="aside-line"><span class="aside-dot">·</span> Error description</div>
+                <div class="aside-line"><span class="aside-dot">·</span> Root cause</div>
+                <div class="aside-line"><span class="aside-dot">·</span> Priority level</div>
+                <div class="aside-line"><span class="aside-dot">·</span> Fix attempted + outcome</div>
+                <div class="aside-line"><span class="aside-dot">·</span> Log file reference</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 7 — COMPLETE -->
+    <div class="step-row step-outcome">
+      <div class="step-connector">
+        <div class="step-num-outer">7</div>
+      </div>
+      <div class="step-content" style="padding-bottom:0">
+        <div class="step-card">
+          <div class="step-card-header">
+            <div>
+              <div class="step-who">✅ Outcome — For All Paths</div>
+              <div class="step-title">Ticket Raised, User Informed, System Learns</div>
+            </div>
+            <span class="badge badge-green" style="font-size:9px">Complete</span>
+          </div>
+          <div class="step-body">
+            <div class="step-desc">
+              In every scenario, the user receives a clear reference number and a plain-English status message. L2 Support receives a complete, well-structured ticket — no chasing users for information. Every resolved incident is fed back into the AI knowledge base, making the system progressively smarter. The first time an issue is resolved, it takes minutes for L2. The tenth time the same issue occurs, it auto-resolves without any human intervention at all.
+            </div>
+            <div class="step-aside">
+              <div class="aside-box aside-blue">
+                <div class="aside-title">Always happens</div>
+                <div class="aside-line"><span class="aside-dot">·</span> Ticket reference shown</div>
+                <div class="aside-line"><span class="aside-dot">·</span> Audit trail saved</div>
+                <div class="aside-line"><span class="aside-dot">·</span> KB updated if resolved</div>
+                <div class="aside-line"><span class="aside-dot">·</span> CSAT rating collected</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ HEADLINE NUMBERS ══════════════════════ -->
+  <div class="section-hd">
+    <div class="section-num">3</div>
+    <div class="section-title">Expected Business Impact</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="quote-box">
+    <div class="quote-stat">
+      <div class="quote-num">80%</div>
+      <div class="quote-stat-label">Reduction in Mean Time to Resolution<br/>95 mins → under 15 mins</div>
+    </div>
+    <div class="quote-divider"></div>
+    <div class="quote-stat">
+      <div class="quote-num">50%</div>
+      <div class="quote-stat-label">Of incidents deflected from L2<br/>Resolved automatically or deduplicated</div>
+    </div>
+    <div class="quote-divider"></div>
+    <div class="quote-stat">
+      <div class="quote-num">0</div>
+      <div class="quote-stat-label">Duplicate support tickets<br/>AI prevents them before they happen</div>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card kpi-blue">
+      <div class="kpi-label">MTTR Target</div>
+      <div class="kpi-value">&lt;15</div>
+      <div class="kpi-sub">minutes per incident</div>
+      <div class="kpi-baseline">From 65–125 min today</div>
+    </div>
+    <div class="kpi-card kpi-green">
+      <div class="kpi-label">Auto-Resolution Rate</div>
+      <div class="kpi-value">30%</div>
+      <div class="kpi-sub">at PoC · Rising as KB grows</div>
+      <div class="kpi-baseline">From 0% today</div>
+    </div>
+    <div class="kpi-card kpi-amber">
+      <div class="kpi-label">L1 Time Saved</div>
+      <div class="kpi-value">25+</div>
+      <div class="kpi-sub">minutes per incident</div>
+      <div class="kpi-baseline">Log retrieval eliminated</div>
+    </div>
+    <div class="kpi-card kpi-red">
+      <div class="kpi-label">L2 Ticket Quality</div>
+      <div class="kpi-value">95%</div>
+      <div class="kpi-sub">mandatory fields complete</div>
+      <div class="kpi-baseline">From ~60% today</div>
+    </div>
+    <div class="kpi-card kpi-purple">
+      <div class="kpi-label">User Satisfaction</div>
+      <div class="kpi-value">4.0</div>
+      <div class="kpi-sub">out of 5 target CSAT</div>
+      <div class="kpi-baseline">Not currently measured</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ GOVERNANCE ══════════════════════ -->
+  <div class="section-hd">
+    <div class="section-num">4</div>
+    <div class="section-title">Governance, Controls & Data Protection</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="gov-grid">
+    <div class="gov-card">
+      <div class="gov-title">🔒 Data Protection</div>
+      <div class="gov-item"><span class="gov-tick">✓</span>All sensitive data (trade IDs, counterparty names, account identifiers) is automatically masked before any AI processing.</div>
+      <div class="gov-item"><span class="gov-tick">✓</span>AI runs exclusively on the bank's private cloud (Azure OpenAI). No data leaves the bank's network boundary.</div>
+      <div class="gov-item"><span class="gov-tick">✓</span>Zero data retention at the model endpoint — no conversation history stored for retraining.</div>
+      <div class="gov-item"><span class="gov-tick">✓</span>DPIA to be completed before production deployment.</div>
+    </div>
+    <div class="gov-card">
+      <div class="gov-title">🧑‍💼 Human Control — Always</div>
+      <div class="gov-item"><span class="gov-tick">✓</span>Two mandatory Human-in-the-Loop gates — the AI never takes a consequential action without explicit user confirmation.</div>
+      <div class="gov-item"><span class="gov-tick">✓</span>The AI only pre-fills and suggests. Users decide whether to try a fix and whether to raise a ticket.</div>
+      <div class="gov-item"><span class="gov-tick">✓</span>All AI decisions are logged with a full audit trail — what was retrieved, what was concluded, and why.</div>
+      <div class="gov-item"><span class="gov-tick">✓</span>Scope is explicitly limited to Genie Bot. Any extension requires a new AI Governance submission.</div>
+    </div>
+    <div class="gov-card">
+      <div class="gov-title">📊 Monitoring & Accountability</div>
+      <div class="gov-item"><span class="gov-tick">✓</span>Real-time monitoring dashboard tracks AI accuracy, response quality, and resolution rates — visible to management.</div>
+      <div class="gov-item"><span class="gov-tick">✓</span>Automatic drift detection alerts the team if AI accuracy degrades silently over time.</div>
+      <div class="gov-item"><span class="gov-tick">✓</span>Monthly KPI reporting to AI Governance Forum — auto-resolution rate, MTTR, cost per resolution.</div>
+      <div class="gov-item"><span class="gov-tick">✓</span>The AI model version is pinned — no silent updates without change management approval.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ DELIVERY PLAN ══════════════════════ -->
+  <div class="section-hd">
+    <div class="section-num">5</div>
+    <div class="section-title">Delivery Plan</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="timeline-grid">
+    <div class="timeline-phase">
+      <div class="phase-num">1</div>
+      <div class="phase-label">Now · In Progress</div>
+      <div class="phase-title">Ideation & Proof of Concept</div>
+      <div class="phase-item">Validate AI can parse Genie Bot logs</div>
+      <div class="phase-item">Build initial knowledge base from historical tickets</div>
+      <div class="phase-item">Demonstrate end-to-end flow in controlled environment</div>
+      <div class="phase-item">Using internal infrastructure at zero additional cost</div>
+      <div class="phase-timeline">Weeks 1 – 4</div>
+    </div>
+    <div class="timeline-phase">
+      <div class="phase-num">2</div>
+      <div class="phase-label">AI Governance Submission</div>
+      <div class="phase-title">PoC — Limited User Trial</div>
+      <div class="phase-item">AI Governance Forum approval required</div>
+      <div class="phase-item">GPT-4.1 on Azure OpenAI (approved platform)</div>
+      <div class="phase-item">Pilot with selected Genie Bot users</div>
+      <div class="phase-item">DPIA completion + Legal &amp; Compliance sign-off</div>
+      <div class="phase-timeline">Weeks 5 – 10</div>
+    </div>
+    <div class="timeline-phase">
+      <div class="phase-num">3</div>
+      <div class="phase-label">Post PoC Results</div>
+      <div class="phase-title">Integration & UAT</div>
+      <div class="phase-item">Full Jira + S3 integration in production</div>
+      <div class="phase-item">User acceptance testing with L1 and L2 teams</div>
+      <div class="phase-item">30-day parallel run (manual + AI simultaneously)</div>
+      <div class="phase-item">KPI baseline established from real incidents</div>
+      <div class="phase-timeline">Weeks 11 – 14</div>
+    </div>
+    <div class="timeline-phase">
+      <div class="phase-num">4</div>
+      <div class="phase-label">Full Deployment</div>
+      <div class="phase-title">Production & Scale</div>
+      <div class="phase-item">Production go-live for all Genie Bot users</div>
+      <div class="phase-item">30-day hypercare period with team support</div>
+      <div class="phase-item">Quarterly KPI review to AI Governance Forum</div>
+      <div class="phase-item">Platform ready to onboard additional CIB bots</div>
+      <div class="phase-timeline">Weeks 15 – 18</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ WHAT WE ARE ASKING FOR ══════════════════════ -->
+  <div class="section-hd">
+    <div class="section-num">6</div>
+    <div class="section-title">What We Are Requesting</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:36px">
+    <div style="background:var(--white);border:1px solid var(--rule);border-radius:8px;padding:22px 24px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin-bottom:12px">For This Governance Submission</div>
+      <div class="gov-item"><span class="gov-tick">→</span><strong>Conditional approval</strong> to proceed to PoC phase pending DPIA completion and Legal &amp; Compliance review.</div>
+      <div class="gov-item"><span class="gov-tick">→</span>Access to <strong>GPT-4.1 and text-embedding-3-small</strong> on the bank's Azure OpenAI private endpoint.</div>
+      <div class="gov-item"><span class="gov-tick">→</span>Read-only access to the <strong>Genie Bot S3 log bucket</strong> via scoped IAM role.</div>
+      <div class="gov-item"><span class="gov-tick">→</span>Integration with the <strong>CIB Jira project GBOT</strong> via approved REST API.</div>
+    </div>
+    <div style="background:var(--ink);color:var(--white);border-radius:8px;padding:22px 24px">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#74b9ff;margin-bottom:12px">The Recommended Decision</div>
+      <div style="font-size:13px;color:#94a3b8;line-height:1.7;margin-bottom:12px">
+        Grant conditional approval for Phases 1–2 (Ideation + PoC), subject to:
+      </div>
+      <div style="display:flex;gap:8px;margin-top:6px;font-size:12px;color:#cbd5e1;align-items:flex-start"><span style="color:#74b9ff;font-weight:700">1.</span> DPIA completion before PoC begins</div>
+      <div style="display:flex;gap:8px;margin-top:6px;font-size:12px;color:#cbd5e1;align-items:flex-start"><span style="color:#74b9ff;font-weight:700">2.</span> Legal &amp; Compliance written sign-off</div>
+      <div style="display:flex;gap:8px;margin-top:6px;font-size:12px;color:#cbd5e1;align-items:flex-start"><span style="color:#74b9ff;font-weight:700">3.</span> Production approval to be re-presented with PoC evidence</div>
+      <div style="display:flex;gap:8px;margin-top:6px;font-size:12px;color:#cbd5e1;align-items:flex-start"><span style="color:#74b9ff;font-weight:700">4.</span> Scope explicitly limited to Genie Bot</div>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div class="footer">
+    <span>GENIE BOT AI SUPPORT COPILOT · BUSINESS WORKFLOW OVERVIEW · MAY 2026</span>
+    <span>CIB MIDDLE OFFICE · SME MANAGEMENT & ML ANALYTICS</span>
+    <span>CONFIDENTIAL — FOR INTERNAL USE ONLY</span>
+  </div>
+
+</div>
+</body>
+</html>
