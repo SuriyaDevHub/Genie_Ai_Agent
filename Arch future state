@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automation Platform — Current vs Future Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A101C;
+    --panel:#101A2C;
+    --panel-2:#0D1626;
+    --grid:#1B2A44;
+    --line:#2C4066;
+    --text:#E8EDF6;
+    --text-dim:#8493AC;
+    --blue:#4C86D6;
+    --blue-soft: rgba(76,134,214,0.18);
+    --amber:#E3A73C;
+    --amber-soft: rgba(227,167,60,0.18);
+    --green:#3FBF7F;
+    --green-soft: rgba(63,191,127,0.18);
+    --red:#E2574C;
+    --red-soft: rgba(226,87,76,0.16);
+    --tactical:#5B6B8C;
+    --userA:#4C86D6;
+    --userA-soft: rgba(76,134,214,0.18);
+    --userB:#9B7FD4;
+    --userB-soft: rgba(155,127,212,0.18);
+    --userC:#22B8B0;
+    --userC-soft: rgba(34,184,176,0.18);
+    --owned:#2FBF9A;
+    --owned-soft: rgba(47,191,154,0.16);
+    --partner:#8B9BC2;
+    --partner-soft: rgba(139,155,194,0.14);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 0%, rgba(76,134,214,0.08), transparent 40%),
+      radial-gradient(circle at 85% 100%, rgba(227,167,60,0.06), transparent 45%),
+      var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Mono', monospace;
+    min-height:100vh;
+    padding:28px 18px 60px;
+  }
+  .wrap{ max-width:1000px; margin:0 auto; }
+  .accent-bar{
+    height:3px; width:210px; margin:0 auto 20px; border-radius:3px;
+    background:linear-gradient(90deg, var(--blue), var(--owned));
+    opacity:.85;
+  }
+
+  header{ text-align:center; margin-bottom:22px; }
+  .eyebrow{
+    font-size:11px; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--text-dim); margin-bottom:10px;
+  }
+  .scale-badges{
+    display:flex; justify-content:center; gap:10px; flex-wrap:wrap;
+    margin:4px 0 18px;
+  }
+  .scale-badges span{
+    font-size:11px; color:var(--text-dim);
+    border:1px solid var(--grid);
+    background:rgba(255,255,255,0.02);
+    border-radius:999px;
+    padding:5px 13px;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .scale-badges .n{ color:var(--blue); font-weight:600; font-family:'Space Grotesk',sans-serif; }
+  .scale-badges .owned-badge{
+    border-color:rgba(47,191,154,.4);
+    background:var(--owned-soft);
+    color:#BFEEDF;
+  }
+  .scale-badges .owned-badge .n{ color:var(--owned); }
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:clamp(22px,4vw,32px);
+    margin:0 0 8px;
+    letter-spacing:-0.01em;
+  }
+  .sub{
+    color:var(--text-dim);
+    font-size:14px;
+    max-width:620px;
+    margin:0 auto 22px;
+    line-height:1.5;
+    min-height:22px;
+    transition:opacity .3s ease;
+  }
+
+  /* toggle */
+  .toggle{
+    display:inline-flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    background:var(--panel-2);
+    border:1px solid var(--grid);
+    border-radius:999px;
+    padding:4px;
+    gap:4px;
+    margin:0 auto 8px;
+  }
+  .toggle button{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:.02em;
+    border:none;
+    background:transparent;
+    color:var(--text-dim);
+    padding:9px 20px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:all .25s ease;
+  }
+  .toggle button:hover:not(.on){
+    background:rgba(255,255,255,0.05);
+    color:var(--text);
+  }
+  .toggle button:focus-visible{
+    outline:2px solid var(--blue);
+    outline-offset:2px;
+  }
+  .toggle button.on{
+    background:linear-gradient(135deg,var(--blue),#3467AE);
+    color:#fff;
+    box-shadow:0 4px 14px rgba(76,134,214,.35);
+  }
+  .toggle-row{ display:flex; justify-content:center; margin-bottom:6px;}
+
+  /* readout strip */
+  .readouts{
+    display:flex; justify-content:center; gap:26px;
+    margin:16px auto 24px; flex-wrap:wrap;
+  }
+  .readout{ text-align:center; min-width:92px; }
+  .readout .val{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:20px; font-weight:700; color:var(--text);
+    transition:color .3s ease;
+  }
+  .readout .lbl{
+    font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--text-dim); margin-top:2px;
+  }
+  .readout.dim .val{ color:var(--tactical); }
+
+  /* stage */
+  .stage-outer{
+    position:relative;
+    width:100%;
+    max-width:760px;
+    margin:0 auto;
+    border-radius:16px;
+    background:linear-gradient(180deg, var(--panel), var(--panel-2));
+    border:1px solid var(--grid);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.03), 0 20px 50px rgba(0,0,0,.35);
+    overflow:hidden;
+  }
+  .stage-outer.current{ aspect-ratio: 1000 / 760; }
+  .stage-outer.future{ aspect-ratio: 1000 / 900; }
+  .stage-outer.walkthrough{ aspect-ratio: 1000 / 1000; }
+  .hidden{ display:none !important; }
+
+  .stage-inner{
+    position:absolute; top:0; left:0;
+    transform-origin: top left;
+  }
+  .stage-inner.current{ width:1000px; height:760px; }
+  .stage-inner.future{ width:1000px; height:900px; }
+  .stage-inner.walkthrough{ width:1000px; height:1000px; }
+
+  .connector-svg{ position:absolute; top:0; left:0; width:100%; height:100%; }
+  .connector-svg path.line{
+    fill:none; stroke:var(--line); stroke-width:2.5;
+  }
+  .connector-svg path.feedback{
+    fill:none; stroke:var(--amber); stroke-width:2.25; stroke-dasharray:6 7; opacity:.65;
+  }
+
+  .node{
+    position:absolute;
+    transform:translate(-50%,-50%);
+    border:1px solid var(--grid);
+    background:rgba(16,26,44,.9);
+    border-radius:10px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    padding:6px 10px;
+    transition: box-shadow .25s ease, border-color .25s ease, background .25s ease;
+  }
+  .node .t{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600; font-size:13.5px; color:var(--text);
+  }
+  .node .s{
+    font-size:10px; color:var(--text-dim); margin-top:2px; letter-spacing:.02em;
+  }
+  .node.end{ border-color:#33456C; background:rgba(20,30,50,.95); }
+  .node.ai{ border-color:#4A3E22; background:rgba(40,32,14,.55); }
+  .node.active{
+    border-color:var(--blue);
+    box-shadow:0 0 0 4px var(--blue-soft), 0 0 18px rgba(76,134,214,.4);
+  }
+  .node.active.success{
+    border-color:var(--green);
+    box-shadow:0 0 0 4px var(--green-soft), 0 0 18px rgba(63,191,127,.4);
+  }
+  .node.active.fail{
+    border-color:var(--red);
+    box-shadow:0 0 0 4px var(--red-soft), 0 0 18px rgba(226,87,76,.4);
+  }
+  .node.active.thinking{
+    border-color:var(--amber);
+    box-shadow:0 0 0 4px var(--amber-soft), 0 0 18px rgba(227,167,60,.4);
+  }
+
+  .packet{
+    position:absolute; top:0; left:0;
+    width:13px; height:13px;
+    border-radius:50%;
+    background:var(--blue);
+    box-shadow:0 0 10px 3px rgba(76,134,214,.7);
+    opacity:0;
+    transform:translate(-50%,-50%);
+  }
+  .packet.success{ background:var(--green); box-shadow:0 0 10px 3px rgba(63,191,127,.7); }
+  .packet.fail{ background:var(--red); box-shadow:0 0 10px 3px rgba(226,87,76,.7); }
+  .packet.retry{ background:var(--amber); box-shadow:0 0 10px 3px rgba(227,167,60,.7); }
+
+  .ghost{
+    position:absolute; transform:translate(-50%,-50%);
+    width:30px; height:30px; border-radius:50%;
+    border:1.5px dashed var(--tactical);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700;
+    color:var(--tactical);
+    opacity:0;
+  }
+  .ghost.show{ animation: ghostFlash 1.4s ease; }
+  @keyframes ghostFlash{
+    0%{opacity:0; transform:translate(-50%,-50%) scale(.7);}
+    18%{opacity:1; transform:translate(-50%,-50%) scale(1);}
+    70%{opacity:1;}
+    100%{opacity:0;}
+  }
+
+  .caption{
+    position:absolute;
+    font-size:10px; color:var(--text-dim); letter-spacing:.04em;
+  }
+
+  .legend{
+    display:flex; justify-content:center; flex-wrap:wrap; gap:16px;
+    margin-top:18px; font-size:11px; color:var(--text-dim);
+  }
+  .legend span{ display:inline-flex; align-items:center; gap:6px; }
+  .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
+
+  .readouts.hidden{ display:none !important; }
+
+  .node.local{ border-color:#4A5A7C; background:rgba(24,32,50,.85); }
+  .node.local .t{ color:#C7CFE0; }
+  .node.platform{ border-color:var(--blue); background:rgba(20,32,54,.9); }
+
+  .node.owned{ border-color:var(--owned); background:rgba(20,42,38,.6); }
+  .node.owned .s{ color:#8FD9C4; }
+  .node.partner{ border-color:var(--partner); background:rgba(26,30,42,.6); }
+  .node.partner .s{ color:#B7C0DE; }
+  .node.active.owned{ box-shadow:0 0 0 4px var(--owned-soft), 0 0 18px rgba(47,191,154,.4); }
+  .node.active.partner{ box-shadow:0 0 0 4px var(--partner-soft), 0 0 18px rgba(139,155,194,.4); }
+
+  .col-heading{
+    position:absolute;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:12.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    transform:translate(-50%,-50%);
+  }
+  .col-heading.local{ color:var(--tactical); }
+  .col-heading.platform{ color:var(--blue); }
+
+  .step-caption{
+    max-width:700px; margin:14px auto 0;
+    text-align:center; font-size:13px; line-height:1.5;
+    color:var(--text); min-height:40px;
+    padding:0 12px;
+  }
+  .step-caption b{ color:var(--blue); }
+
+  /* multi-user walkthrough */
+  .step-dots{
+    display:flex; justify-content:center; gap:7px; margin:2px 0 4px;
+  }
+  .step-dots i{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--grid); display:inline-block;
+    transition:background .3s ease, transform .3s ease;
+  }
+  .step-dots i.on{ background:var(--blue); transform:scale(1.3); }
+
+  .avatar{
+    position:absolute; transform:translate(-50%,-50%);
+    width:62px; height:62px; border-radius:50%;
+    border:2px solid var(--grid);
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px;
+    background:rgba(16,26,44,.9);
+    transition: box-shadow .25s ease, border-color .25s ease;
+  }
+  .avatar .role{
+    font-family:'IBM Plex Mono',monospace; font-weight:400; font-size:8px;
+    color:var(--text-dim); margin-top:1px; letter-spacing:.02em;
+  }
+  .avatar.userA{ color:var(--userA); }
+  .avatar.userB{ color:var(--userB); }
+  .avatar.userC{ color:var(--userC); }
+  .avatar.active.userA{ border-color:var(--userA); box-shadow:0 0 0 5px var(--userA-soft), 0 0 16px rgba(76,134,214,.45); }
+  .avatar.active.userB{ border-color:var(--userB); box-shadow:0 0 0 5px var(--userB-soft), 0 0 16px rgba(155,127,212,.45); }
+  .avatar.active.userC{ border-color:var(--userC); box-shadow:0 0 0 5px var(--userC-soft), 0 0 16px rgba(34,184,176,.45); }
+
+  .node.active.userA{ border-color:var(--userA); box-shadow:0 0 0 4px var(--userA-soft), 0 0 18px rgba(76,134,214,.4); }
+  .node.active.userB{ border-color:var(--userB); box-shadow:0 0 0 4px var(--userB-soft), 0 0 18px rgba(155,127,212,.4); }
+  .node.active.userC{ border-color:var(--userC); box-shadow:0 0 0 4px var(--userC-soft), 0 0 18px rgba(34,184,176,.4); }
+
+  .packet.userA{ background:var(--userA); box-shadow:0 0 10px 3px rgba(76,134,214,.7); }
+  .packet.userB{ background:var(--userB); box-shadow:0 0 10px 3px rgba(155,127,212,.7); }
+  .packet.userC{ background:var(--userC); box-shadow:0 0 10px 3px rgba(34,184,176,.7); }
+  .packet.cicd{ width:9px; height:9px; background:var(--amber); box-shadow:0 0 8px 2px rgba(227,167,60,.6); opacity:.55; }
+
+  .pending-badge{
+    position:absolute; transform:translate(-50%,-50%);
+    font-size:9px; color:var(--amber);
+    background:rgba(227,167,60,.12);
+    border:1px solid var(--amber);
+    border-radius:999px; padding:2px 8px;
+    opacity:0; white-space:nowrap;
+  }
+  .pending-badge.show{ animation:pendingFlash 1.9s ease; }
+  @keyframes pendingFlash{
+    0%{opacity:0;} 15%{opacity:1;} 80%{opacity:1;} 100%{opacity:0;}
+  }
+
+  footer{
+    text-align:center; margin-top:26px; font-size:11px; color:var(--text-dim);
+  }
+
+  @media (max-width: 480px){
+    .toggle button{ padding:8px 13px; font-size:12px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .packet{ transition:none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="accent-bar"></div>
+
+  <header>
+    <div class="eyebrow">CIB Middle Office · Genie Bot Automation Platform</div>
+    <h1>How the Automation Flow Works</h1>
+    <div class="scale-badges">
+      <span><span class="n">~250</span>&nbsp;bots in scope</span>
+      <span>codebase already in <span class="n">GitHub</span></span>
+      <span><span class="n">multi-user</span>&nbsp;concurrent execution</span>
+      <span class="owned-badge">owned &amp; run by <span class="n">our team</span></span>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle" role="tablist" aria-label="Select state">
+        <button id="btn-current" class="on" role="tab" aria-selected="true">Current State</button>
+        <button id="btn-future" role="tab" aria-selected="false">Future State</button>
+        <button id="btn-migration" role="tab" aria-selected="false">What Moves Where</button>
+        <button id="btn-walkthrough" role="tab" aria-selected="false">Multi-User Walkthrough</button>
+        <button id="btn-ownership" role="tab" aria-selected="false">Ownership &amp; Rollout</button>
+      </div>
+    </div>
+    <p class="sub" id="subline">One bot, one desktop — a job runs, and once it reaches the internal application, nobody downstream can see whether it actually worked.</p>
+  </header>
+
+  <div class="readouts" id="readouts">
+    <div class="readout dim"><div class="val" id="r1">--</div><div class="lbl">Queue depth</div></div>
+    <div class="readout dim"><div class="val" id="r2">--</div><div class="lbl">Success rate</div></div>
+    <div class="readout dim"><div class="val" id="r3">--</div><div class="lbl">Auto-recovered</div></div>
+  </div>
+
+  <!-- CURRENT STATE -->
+  <div class="stage-outer current" id="scene-current">
+    <div class="stage-inner current" id="inner-current">
+      <svg class="connector-svg" viewBox="0 0 1000 760" id="svg-current"></svg>
+      <!-- nodes -->
+      <div class="node" style="left:50%;top:7.9%;width:220px;height:56px;" id="cur-user"><div class="t">User</div><div class="s">1 of many, own desktop</div></div>
+      <div class="node" style="left:50%;top:25%;width:220px;height:56px;" id="cur-wrapper"><div class="t">Genie Bot</div><div class="s">picks automation</div></div>
+      <div class="node" style="left:50%;top:42.1%;width:220px;height:56px;" id="cur-select"><div class="t">Select Automation</div><div class="s">1 of ~250 bots</div></div>
+      <div class="node" style="left:50%;top:59.2%;width:220px;height:56px;" id="cur-launch"><div class="t">Launch Local EXE</div><div class="s">built by hand from GitHub</div></div>
+      <div class="node" style="left:50%;top:76.3%;width:220px;height:56px;" id="cur-bot"><div class="t">Genie Bot Engine</div></div>
+      <div class="node end" style="left:50%;top:92.1%;width:260px;height:56px;" id="cur-apps"><div class="t">Internal Application</div></div>
+      <div class="ghost" style="left:78%;top:92.1%;" id="cur-ghost">?</div>
+      <div class="caption" style="left:78%;top:97%;transform:translate(-50%,0);">no status logged</div>
+    </div>
+  </div>
+
+  <!-- FUTURE STATE -->
+  <div class="stage-outer future hidden" id="scene-future">
+    <div class="stage-inner future" id="inner-future">
+      <svg class="connector-svg" viewBox="0 0 1000 900" id="svg-future"></svg>
+      <div class="node" style="left:50%;top:5.6%;width:230px;height:56px;" id="fut-portal"><div class="t">Self-Service Portal</div></div>
+      <div class="node" style="left:50%;top:15.6%;width:230px;height:56px;" id="fut-auth"><div class="t">Auth &amp; RBAC</div><div class="s">AD / SSO</div></div>
+      <div class="node" style="left:50%;top:25.6%;width:230px;height:56px;" id="fut-orch"><div class="t">Genie Bot Orchestrator</div><div class="s">.NET</div></div>
+      <div class="node" style="left:50%;top:35.6%;width:230px;height:56px;" id="fut-approval"><div class="t">Approval Engine</div><div class="s">maker-checker</div></div>
+      <div class="node" style="left:50%;top:45.6%;width:230px;height:56px;" id="fut-queue"><div class="t">Job Queue</div><div class="s">fed by GitHub via CI/CD</div></div>
+      <div class="node" style="left:19%;top:57.8%;width:180px;height:56px;" id="fut-w1"><div class="t">Genie Bot · Instrument</div></div>
+      <div class="node" style="left:50%;top:57.8%;width:180px;height:56px;" id="fut-w2"><div class="t">Genie Bot · Pricing</div></div>
+      <div class="node" style="left:81%;top:57.8%;width:180px;height:56px;" id="fut-w3"><div class="t">Genie Bot · DataOps</div></div>
+      <div class="caption" style="left:8%;top:63%;transform:translate(-50%,0);width:150px;text-align:center;">auto-scaling pool · many users, at once</div>
+      <div class="node end" style="left:50%;top:70%;width:440px;height:60px;" id="fut-apps"><div class="t">Internal Applications</div></div>
+      <div class="node ai" style="left:50%;top:82.2%;width:440px;height:60px;" id="fut-ai"><div class="t">Logs · Audit · AI Ops Layer</div><div class="s" id="fut-ai-sub">watching every job</div></div>
+      <div class="caption" style="left:93%;top:64%;transform:translate(-50%,0);">auto&#8209;retry</div>
+    </div>
+  </div>
+
+  <!-- MIGRATION MAP -->
+  <div class="stage-outer current hidden" id="scene-migration">
+    <div class="stage-inner current" id="inner-migration">
+      <svg class="connector-svg" viewBox="0 0 1000 760" id="svg-migration"></svg>
+
+      <div class="col-heading local" style="left:22%;top:5.3%;">Today · on the desktop</div>
+      <div class="col-heading platform" style="left:78%;top:5.3%;">Tomorrow · on the platform</div>
+
+      <div class="node local" style="left:22%;top:14.5%;width:280px;height:60px;" id="mig-l1"><div class="t">Genie Bot Wrapper</div><div class="s">picks &amp; launches automation</div></div>
+      <div class="node local" style="left:22%;top:39.5%;width:280px;height:60px;" id="mig-l2"><div class="t">Manual Selection</div><div class="s">user chooses which EXE to run</div></div>
+      <div class="node local" style="left:22%;top:64.5%;width:280px;height:60px;" id="mig-l3"><div class="t">Local EXE</div><div class="s">built by hand from GitHub, copied PC-by-PC</div></div>
+      <div class="node local" style="left:22%;top:89.5%;width:280px;height:60px;" id="mig-l4"><div class="t">Genie Bot Engine</div><div class="s">one user, one job, one desktop at a time</div></div>
+
+      <div class="node platform" style="left:78%;top:14.5%;width:290px;height:60px;" id="mig-r1"><div class="t">Genie Bot Orchestrator</div><div class="s">assigns work, tracks execution</div></div>
+      <div class="node platform" style="left:78%;top:39.5%;width:290px;height:60px;" id="mig-r2"><div class="t">Portal + Approval Engine</div><div class="s">governed request, maker-checker</div></div>
+      <div class="node platform" style="left:78%;top:64.5%;width:290px;height:60px;" id="mig-r3"><div class="t">CI/CD + Artifact Registry</div><div class="s">builds the same GitHub repo, versions it</div></div>
+      <div class="node platform" style="left:78%;top:89.5%;width:290px;height:60px;" id="mig-r4"><div class="t">Auto-Scaling Worker Pool</div><div class="s">many users, many jobs, at once</div></div>
+    </div>
+  </div>
+  <p class="step-caption hidden" id="mig-caption">&nbsp;</p>
+
+  <!-- MULTI-USER WALKTHROUGH -->
+  <div class="stage-outer walkthrough hidden" id="scene-walkthrough">
+    <div class="stage-inner walkthrough" id="inner-walkthrough">
+      <svg class="connector-svg" viewBox="0 0 1000 1000" id="svg-walkthrough"></svg>
+
+      <div class="avatar userA" style="left:26%;top:4.5%;" id="wk-userA">A<span class="role">Pricing</span></div>
+      <div class="avatar userB" style="left:50%;top:4.5%;" id="wk-userB">B<span class="role">Static Data</span></div>
+      <div class="avatar userC" style="left:74%;top:4.5%;" id="wk-userC">C<span class="role">DataOps</span></div>
+
+      <div class="node" style="left:50%;top:15%;width:260px;height:56px;" id="wk-portal"><div class="t">Self-Service Portal</div></div>
+      <div class="node" style="left:50%;top:23%;width:260px;height:56px;" id="wk-auth"><div class="t">Auth &amp; RBAC</div><div class="s">AD / SSO</div></div>
+      <div class="node" style="left:50%;top:31%;width:260px;height:56px;" id="wk-orch"><div class="t">Genie Bot Orchestrator</div></div>
+      <div class="node" style="left:50%;top:39%;width:260px;height:56px;" id="wk-approval"><div class="t">Approval Engine</div><div class="s">maker-checker where required</div></div>
+      <div class="pending-badge" id="wk-pending" style="left:78%;top:39%;">awaiting sign-off</div>
+      <div class="node ai" style="left:50%;top:47%;width:320px;height:56px;" id="wk-cicd"><div class="t">GitHub → CI/CD → Registry</div><div class="s">always building, in the background</div></div>
+      <div class="node" style="left:50%;top:55%;width:260px;height:56px;" id="wk-queue"><div class="t">Job Queue</div></div>
+      <div class="node" style="left:19%;top:63%;width:180px;height:56px;" id="wk-w1"><div class="t">Genie Bot · Instrument</div></div>
+      <div class="node" style="left:50%;top:63%;width:180px;height:56px;" id="wk-w2"><div class="t">Genie Bot · Pricing</div></div>
+      <div class="node" style="left:81%;top:63%;width:180px;height:56px;" id="wk-w3"><div class="t">Genie Bot · DataOps</div></div>
+      <div class="node end" style="left:50%;top:71%;width:440px;height:60px;" id="wk-apps"><div class="t">Internal Applications</div></div>
+      <div class="node ai" style="left:50%;top:79%;width:440px;height:60px;" id="wk-ai"><div class="t">Logs · Audit · AI Ops</div></div>
+      <div class="caption" style="left:93%;top:60%;transform:translate(-50%,0);">status returns</div>
+    </div>
+  </div>
+  <div class="step-dots hidden" id="wk-dots">
+    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+  </div>
+  <p class="step-caption hidden" id="wk-caption">&nbsp;</p>
+
+  <!-- OWNERSHIP & ROLLOUT -->
+  <div class="stage-outer future hidden" id="scene-ownership">
+    <div class="stage-inner future" id="inner-ownership">
+      <svg class="connector-svg" viewBox="0 0 1000 900" id="svg-ownership"></svg>
+
+      <div class="node owned" style="left:50%;top:10%;width:300px;height:60px;" id="own-portal"><div class="t">Self-Service Portal</div><div class="s">we own &amp; build</div></div>
+      <div class="node partner" style="left:50%;top:20%;width:300px;height:60px;" id="own-auth"><div class="t">Auth &amp; RBAC (AD / SSO)</div><div class="s">IT: plug into enterprise SSO</div></div>
+      <div class="node owned" style="left:50%;top:30%;width:300px;height:60px;" id="own-orch"><div class="t">Genie Bot Orchestrator</div><div class="s">we own &amp; build</div></div>
+      <div class="node owned" style="left:50%;top:40%;width:300px;height:60px;" id="own-approval"><div class="t">Workflow &amp; Approval Engine</div><div class="s">we own &amp; build</div></div>
+      <div class="node owned" style="left:50%;top:50%;width:300px;height:60px;" id="own-cicd"><div class="t">GitHub → CI/CD → Registry</div><div class="s">we own &amp; configure</div></div>
+      <div class="node owned" style="left:50%;top:60%;width:300px;height:60px;" id="own-queue"><div class="t">Job Queue</div><div class="s">we own &amp; build</div></div>
+      <div class="node partner" style="left:50%;top:70%;width:300px;height:60px;" id="own-workers"><div class="t">Worker Pool (session hosts)</div><div class="s">IT: hosting &amp; network</div></div>
+      <div class="node end" style="left:50%;top:80%;width:300px;height:60px;" id="own-apps"><div class="t">Internal Applications</div><div class="s">existing systems, unchanged</div></div>
+      <div class="node owned" style="left:50%;top:90%;width:300px;height:60px;" id="own-ai"><div class="t">Logs · Audit · AI Ops</div><div class="s">we own &amp; build</div></div>
+    </div>
+  </div>
+  <div class="step-dots hidden" id="own-dots">
+    <i></i><i></i><i></i><i></i><i></i>
+  </div>
+  <p class="step-caption hidden" id="own-caption">&nbsp;</p>
+
+  <div class="legend" id="legend-current">
+    <span><i class="dot" style="background:var(--blue)"></i> job in flight</span>
+    <span><i class="dot" style="background:var(--tactical)"></i> no visibility past this point</span>
+  </div>
+  <div class="legend hidden" id="legend-future">
+    <span><i class="dot" style="background:var(--blue)"></i> job in flight</span>
+    <span><i class="dot" style="background:var(--green)"></i> completed</span>
+    <span><i class="dot" style="background:var(--red)"></i> failed validation</span>
+    <span><i class="dot" style="background:var(--amber)"></i> AI diagnosing / retry</span>
+  </div>
+  <div class="legend hidden" id="legend-migration">
+    <span><i class="dot" style="background:var(--tactical)"></i> runs on the user's desktop today</span>
+    <span><i class="dot" style="background:var(--blue)"></i> replacement, hosted on the platform</span>
+  </div>
+  <div class="legend hidden" id="legend-walkthrough">
+    <span><i class="dot" style="background:var(--userA)"></i> User A</span>
+    <span><i class="dot" style="background:var(--userB)"></i> User B</span>
+    <span><i class="dot" style="background:var(--userC)"></i> User C</span>
+    <span><i class="dot" style="background:var(--amber)"></i> awaiting approval</span>
+  </div>
+  <div class="legend hidden" id="legend-ownership">
+    <span><i class="dot" style="background:var(--owned)"></i> Business Automation Team — owns &amp; builds</span>
+    <span><i class="dot" style="background:var(--partner)"></i> IT Infrastructure — partnership needed</span>
+    <span><i class="dot" style="background:var(--tactical)"></i> existing systems, unchanged</span>
+  </div>
+
+  <footer>Illustrative flow · animation loops continuously to show steady-state behaviour</footer>
+</div>
+
+<script>
+(function(){
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const delay = ms => new Promise(res => setTimeout(res, ms));
+
+  // ---------- responsive scaling ----------
+  function fit(outerId, innerId){
+    const outer = document.getElementById(outerId);
+    const inner = document.getElementById(innerId);
+    const baseW = inner.classList.contains('current') ? 1000 : 1000;
+    function resize(){
+      const w = outer.getBoundingClientRect().width;
+      const scale = w / baseW;
+      inner.style.transform = 'scale(' + scale + ')';
+    }
+    new ResizeObserver(resize).observe(outer);
+    resize();
+  }
+  fit('scene-current','inner-current');
+  fit('scene-future','inner-future');
+  fit('scene-migration','inner-migration');
+  fit('scene-walkthrough','inner-walkthrough');
+  fit('scene-ownership','inner-ownership');
+
+  // ---------- draw connector paths ----------
+  function drawPaths(svgId, defs){
+    const svg = document.getElementById(svgId);
+    defs.forEach(function(d){
+      const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+      p.setAttribute('d', d.d);
+      p.setAttribute('class', d.cls || 'line');
+      svg.appendChild(p);
+    });
+  }
+
+  // ===================================================================
+  // CURRENT STATE PATHS
+  // ===================================================================
+  const curPaths = {
+    e1:'M500,88 L500,162',
+    e2:'M500,218 L500,292',
+    e3:'M500,348 L500,422',
+    e4:'M500,478 L500,552',
+    e5:'M500,608 L500,672'
+  };
+  drawPaths('svg-current', [
+    {d:curPaths.e1},{d:curPaths.e2},{d:curPaths.e3},{d:curPaths.e4},{d:curPaths.e5}
+  ]);
+
+  // ===================================================================
+  // FUTURE STATE PATHS
+  // ===================================================================
+  const futPaths = {
+    e1:'M500,84 L500,116',                              // portal -> auth
+    e2:'M500,172 L500,204',                              // auth -> orchestrator
+    e3:'M500,260 L500,292',                              // orchestrator -> approval
+    e4:'M500,348 L500,380',                              // approval -> queue
+    e5:'M440,436 Q 300,470 190,492',                      // queue -> w1
+    e6:'M500,436 L500,492',                               // queue -> w2
+    e7:'M560,436 Q 700,470 810,492',                      // queue -> w3
+    e8:'M190,548 Q 260,585 350,596',                       // w1 -> apps
+    e9:'M500,548 L500,596',                               // w2 -> apps
+    e10:'M810,548 Q 740,585 650,596',                      // w3 -> apps
+    e11:'M500,658 L500,696',                              // apps -> ai
+    feedback:'M726,733 C 950,733 950,410 620,410'          // ai -> queue (retry loop)
+  };
+  drawPaths('svg-future', [
+    {d:futPaths.e1},{d:futPaths.e2},{d:futPaths.e3},{d:futPaths.e4},
+    {d:futPaths.e5},{d:futPaths.e6},{d:futPaths.e7},
+    {d:futPaths.e8},{d:futPaths.e9},{d:futPaths.e10},
+    {d:futPaths.e11},
+    {d:futPaths.feedback, cls:'feedback'}
+  ]);
+
+  // ===================================================================
+  // MIGRATION MAP PATHS (local component -> platform replacement)
+  // ===================================================================
+  const migPaths = {
+    r1:'M360,110 L635,110',
+    r2:'M360,300 L635,300',
+    r3:'M360,490 L635,490',
+    r4:'M360,680 L635,680'
+  };
+  drawPaths('svg-migration', [
+    {d:migPaths.r1},{d:migPaths.r2},{d:migPaths.r3},{d:migPaths.r4}
+  ]);
+
+  // ===================================================================
+  // MULTI-USER WALKTHROUGH PATHS
+  // ===================================================================
+  const wkPaths = {
+    userAToPortal:'M260,76 Q 340,100 430,122',
+    userBToPortal:'M500,76 L500,122',
+    userCToPortal:'M740,76 Q 660,100 570,122',
+    portalToAuth:'M500,178 L500,202',
+    authToOrch:'M500,258 L500,282',
+    orchToApproval:'M500,338 L500,362',
+    approvalToCicd:'M500,418 L500,442',
+    cicdToQueue:'M500,498 L500,522',
+    queueToW1:'M440,578 Q 300,600 190,602',
+    queueToW2:'M500,578 L500,602',
+    queueToW3:'M560,578 Q 700,600 810,602',
+    w1ToApps:'M190,658 Q 260,680 350,680',
+    w2ToApps:'M500,658 L500,680',
+    w3ToApps:'M810,658 Q 740,680 650,680',
+    appsToAi:'M500,740 L500,760',
+    aiToPortal:'M720,790 C 950,790 950,150 630,150'
+  };
+  drawPaths('svg-walkthrough', [
+    {d:wkPaths.userAToPortal},{d:wkPaths.userBToPortal},{d:wkPaths.userCToPortal},
+    {d:wkPaths.portalToAuth},{d:wkPaths.authToOrch},{d:wkPaths.orchToApproval},
+    {d:wkPaths.approvalToCicd},{d:wkPaths.cicdToQueue},
+    {d:wkPaths.queueToW1},{d:wkPaths.queueToW2},{d:wkPaths.queueToW3},
+    {d:wkPaths.w1ToApps},{d:wkPaths.w2ToApps},{d:wkPaths.w3ToApps},
+    {d:wkPaths.appsToAi},
+    {d:wkPaths.aiToPortal, cls:'feedback'}
+  ]);
+
+  // ===================================================================
+  // OWNERSHIP & ROLLOUT PATHS
+  // ===================================================================
+  const ownPaths = {
+    portalToAuth:'M500,120 L500,150',
+    authToOrch:'M500,210 L500,240',
+    orchToApproval:'M500,300 L500,330',
+    approvalToCicd:'M500,390 L500,420',
+    cicdToQueue:'M500,480 L500,510',
+    queueToWorkers:'M500,570 L500,600',
+    workersToApps:'M500,660 L500,690',
+    appsToAi:'M500,750 L500,780'
+  };
+  drawPaths('svg-ownership', [
+    {d:ownPaths.portalToAuth},{d:ownPaths.authToOrch},{d:ownPaths.orchToApproval},
+    {d:ownPaths.approvalToCicd},{d:ownPaths.cicdToQueue},{d:ownPaths.queueToWorkers},
+    {d:ownPaths.workersToApps},{d:ownPaths.appsToAi}
+  ]);
+
+  // ---------- helpers ----------
+  function pulse(node, cls, dur){
+    if(!node) return;
+    node.classList.add('active');
+    if(cls) node.classList.add(cls);
+    setTimeout(function(){
+      node.classList.remove('active');
+      if(cls) node.classList.remove(cls);
+    }, dur || 700);
+  }
+
+  function makePacket(container, colorCls){
+    const p = document.createElement('div');
+    p.className = 'packet' + (colorCls ? ' ' + colorCls : '');
+    container.appendChild(p);
+    return p;
+  }
+
+  function travel(packet, d, duration){
+    return new Promise(function(resolve){
+      if(reduceMotion){ packet.remove(); resolve(); return; }
+      packet.style.offsetPath = "path('" + d + "')";
+      packet.style.offsetDistance = '0%';
+      packet.style.opacity = '1';
+      const anim = packet.animate(
+        [{ offsetDistance:'0%' }, { offsetDistance:'100%' }],
+        { duration: duration, easing:'ease-in-out', fill:'forwards' }
+      );
+      anim.onfinish = function(){ resolve(); };
+    });
+  }
+
+  function fadeOut(packet, dur){
+    return new Promise(function(resolve){
+      if(reduceMotion){ packet.remove(); resolve(); return; }
+      const a = packet.animate([{opacity:1},{opacity:0}], {duration: dur||350, fill:'forwards'});
+      a.onfinish = function(){ packet.remove(); resolve(); };
+    });
+  }
+
+  // ===================================================================
+  // CURRENT STATE LOOP
+  // ===================================================================
+  let token = 0;
+
+  async function runCurrent(myToken){
+    const container = document.getElementById('inner-current');
+    const nodes = {
+      user: document.getElementById('cur-user'),
+      wrapper: document.getElementById('cur-wrapper'),
+      select: document.getElementById('cur-select'),
+      launch: document.getElementById('cur-launch'),
+      bot: document.getElementById('cur-bot'),
+      apps: document.getElementById('cur-apps')
+    };
+    const ghost = document.getElementById('cur-ghost');
+
+    while(token === myToken){
+      const packet = makePacket(container);
+      pulse(nodes.user);
+      await travel(packet, curPaths.e1, 850); if(token!==myToken){packet.remove();return;}
+      pulse(nodes.wrapper);
+      await travel(packet, curPaths.e2, 850); if(token!==myToken){packet.remove();return;}
+      pulse(nodes.select);
+      await travel(packet, curPaths.e3, 850); if(token!==myToken){packet.remove();return;}
+      pulse(nodes.launch);
+      await travel(packet, curPaths.e4, 850); if(token!==myToken){packet.remove();return;}
+      pulse(nodes.bot);
+      await travel(packet, curPaths.e5, 850); if(token!==myToken){packet.remove();return;}
+      pulse(nodes.apps, null, 900);
+      ghost.classList.remove('show'); void ghost.offsetWidth; ghost.classList.add('show');
+      await fadeOut(packet, 350);
+      if(token!==myToken) return;
+      await delay(1300);
+    }
+  }
+
+  // ===================================================================
+  // FUTURE STATE LOOP
+  // ===================================================================
+  async function runFuture(myToken){
+    const container = document.getElementById('inner-future');
+    const N = {
+      portal: document.getElementById('fut-portal'),
+      auth: document.getElementById('fut-auth'),
+      orch: document.getElementById('fut-orch'),
+      approval: document.getElementById('fut-approval'),
+      queue: document.getElementById('fut-queue'),
+      w1: document.getElementById('fut-w1'),
+      w2: document.getElementById('fut-w2'),
+      w3: document.getElementById('fut-w3'),
+      apps: document.getElementById('fut-apps'),
+      ai: document.getElementById('fut-ai')
+    };
+    const aiSub = document.getElementById('fut-ai-sub');
+    let queued = 6, success = 92, recovered = 0;
+    const r1 = document.getElementById('r1'), r2 = document.getElementById('r2'), r3 = document.getElementById('r3');
+
+    function setReadouts(){
+      r1.textContent = queued; r2.textContent = success + '%'; r3.textContent = recovered;
+    }
+
+    while(token === myToken){
+      // intake: portal -> queue
+      const intake = makePacket(container);
+      pulse(N.portal);
+      await travel(intake, futPaths.e1, 500); if(token!==myToken){intake.remove();return;}
+      pulse(N.auth);
+      await travel(intake, futPaths.e2, 500); if(token!==myToken){intake.remove();return;}
+      pulse(N.orch);
+      await travel(intake, futPaths.e3, 500); if(token!==myToken){intake.remove();return;}
+      pulse(N.approval);
+      await travel(intake, futPaths.e4, 500); if(token!==myToken){intake.remove();return;}
+      pulse(N.queue, null, 900);
+      await fadeOut(intake, 250);
+      if(token!==myToken) return;
+      queued = 3; setReadouts();
+
+      // fan-out: queue -> 3 workers in parallel
+      const p1 = makePacket(container), p2 = makePacket(container), p3 = makePacket(container);
+      pulse(N.w1); pulse(N.w2); pulse(N.w3);
+      await Promise.all([
+        travel(p1, futPaths.e5, 650),
+        travel(p2, futPaths.e6, 650),
+        travel(p3, futPaths.e7, 650)
+      ]);
+      if(token!==myToken){p1.remove();p2.remove();p3.remove();return;}
+      queued = 0; setReadouts();
+
+      // workers -> apps (p3 will be the one that fails)
+      await Promise.all([
+        travel(p1, futPaths.e8, 600),
+        travel(p2, futPaths.e9, 600),
+        travel(p3, futPaths.e10, 600)
+      ]);
+      if(token!==myToken){p1.remove();p2.remove();p3.remove();return;}
+
+      pulse(N.apps, 'success', 700);
+      p1.classList.add('success'); p2.classList.add('success'); p3.classList.add('fail');
+      await delay(250);
+
+      // apps -> ai layer, all three
+      await Promise.all([
+        travel(p1, futPaths.e11, 500),
+        travel(p2, futPaths.e11, 500),
+        travel(p3, futPaths.e11, 500)
+      ]);
+      if(token!==myToken){p1.remove();p2.remove();p3.remove();return;}
+
+      success = 92;
+      pulse(N.ai, 'success', 700);
+      await Promise.all([fadeOut(p1,250), fadeOut(p2,250)]);
+      setReadouts();
+
+      // failed packet lingers, AI "diagnoses"
+      p3.style.opacity = '1';
+      N.ai.classList.add('active','thinking');
+      aiSub.textContent = 'diagnosing failed job…';
+      await delay(1100);
+      if(token!==myToken){p3.remove();N.ai.classList.remove('active','thinking');return;}
+      N.ai.classList.remove('active','thinking');
+      aiSub.textContent = 'watching every job';
+      await fadeOut(p3, 200);
+
+      // retry loop: ai -> queue -> w3 -> apps -> ai (success, green)
+      const retry = makePacket(container, 'retry');
+      pulse(N.queue, 'thinking', 900);
+      await travel(retry, futPaths.feedback, 900); if(token!==myToken){retry.remove();return;}
+      pulse(N.w3);
+      retry.classList.remove('retry');
+      await travel(retry, futPaths.e7, 550); if(token!==myToken){retry.remove();return;}
+      await travel(retry, futPaths.e10, 550); if(token!==myToken){retry.remove();return;}
+      retry.classList.add('success');
+      pulse(N.apps, 'success', 600);
+      await travel(retry, futPaths.e11, 500); if(token!==myToken){retry.remove();return;}
+      pulse(N.ai, 'success', 700);
+      recovered += 1; success = 100;
+      setReadouts();
+      await fadeOut(retry, 250);
+      if(token!==myToken) return;
+
+      await delay(1400);
+    }
+  }
+
+  // ===================================================================
+  // MIGRATION MAP LOOP
+  // ===================================================================
+  async function runMigration(myToken){
+    const container = document.getElementById('inner-migration');
+    const caption = document.getElementById('mig-caption');
+    const steps = [
+      { L:'mig-l1', R:'mig-r1', path: migPaths.r1,
+        text: '<b>Genie Bot\u2019s</b> routing logic moves into the <b>Orchestrator</b> — same tool we own today, the desktop just stops deciding which job runs where.' },
+      { L:'mig-l2', R:'mig-r2', path: migPaths.r2,
+        text: '<b>Manually picking</b> an automation becomes a governed request through the <b>Portal</b>, gated by maker-checker approval.' },
+      { L:'mig-l3', R:'mig-r3', path: migPaths.r3,
+        text: 'The <b>Local EXE</b> — built by hand from the existing <b>GitHub</b> source and copied PC-by-PC — is replaced by a <b>CI/CD pipeline</b> that builds the same repo and publishes a versioned artifact automatically. No migration of code, just a pipeline on top of it.' },
+      { L:'mig-l4', R:'mig-r4', path: migPaths.r4,
+        text: 'The <b>Genie Bot engine</b> that ran one job at a time on one desktop becomes an <b>auto-scaling Worker Pool</b> — the same tool we already own, now able to serve many users running jobs at once.' }
+    ];
+    const nodes = {};
+    steps.forEach(function(s){
+      nodes[s.L] = document.getElementById(s.L);
+      nodes[s.R] = document.getElementById(s.R);
+    });
+
+    while(token === myToken){
+      for(let i=0;i<steps.length;i++){
+        const s = steps[i];
+        caption.innerHTML = s.text;
+        pulse(nodes[s.L], null, 1000);
+        pulse(nodes[s.R], 'success', 1000);
+        const packet = makePacket(container);
+        await travel(packet, s.path, 850); if(token!==myToken){packet.remove();return;}
+        await fadeOut(packet, 250);
+        if(token!==myToken) return;
+        await delay(450);
+      }
+      caption.innerHTML = '<b>End state:</b> no automation logic needs to live on a desktop.';
+      await delay(2200);
+      if(token!==myToken) return;
+    }
+  }
+
+  // ===================================================================
+  // MULTI-USER WALKTHROUGH LOOP
+  // ===================================================================
+  const wkStepText = [
+    'Users <b>A</b>, <b>B</b>, and <b>C</b> each log into the Self-Service Portal through existing SSO — no separate accounts to manage.',
+    'The portal checks each user\u2019s identity and role via <b>RBAC</b> before anything is submitted.',
+    'Each request reaches the <b>Genie Bot Orchestrator</b>, which takes ownership of tracking it end-to-end.',
+    'The <b>Approval Engine</b> applies maker-checker only where the bot\u2019s action needs it — User B\u2019s request waits for sign-off; A\u2019s and C\u2019s don\u2019t.',
+    'In the background, <b>GitHub → CI/CD → Artifact Registry</b> keeps every one of the ~250 bots built and versioned — the queue always pulls the current release.',
+    'The <b>Job Queue</b> dispatches each user\u2019s request to an available worker — many jobs run at once, not one desktop at a time.',
+    'Workers execute against the internal applications; every action is logged for audit.',
+    'Each user sees their own job\u2019s outcome back in the portal — nothing left to guess.'
+  ];
+
+  async function runWalkthroughCaptions(myToken){
+    const dotsEls = document.querySelectorAll('#wk-dots i');
+    const captionEl = document.getElementById('wk-caption');
+    let i = 0;
+    while(token === myToken){
+      captionEl.innerHTML = wkStepText[i];
+      dotsEls.forEach(function(d, idx){ d.classList.toggle('on', idx === i); });
+      i = (i + 1) % wkStepText.length;
+      await delay(2400);
+    }
+  }
+
+  async function runWalkthroughCicdHeartbeat(myToken){
+    const cicd = document.getElementById('wk-cicd');
+    while(token === myToken){
+      pulse(cicd, null, 900);
+      await delay(2200);
+    }
+  }
+
+  async function userJourney(myToken, user, colorCls, avatarId, portalPath, fanoutPath, mergePath, workerId, startDelay){
+    await delay(startDelay);
+    const container = document.getElementById('inner-walkthrough');
+    const avatar = document.getElementById(avatarId);
+    const portal = document.getElementById('wk-portal');
+    const auth = document.getElementById('wk-auth');
+    const orch = document.getElementById('wk-orch');
+    const approval = document.getElementById('wk-approval');
+    const cicd = document.getElementById('wk-cicd');
+    const queue = document.getElementById('wk-queue');
+    const worker = document.getElementById(workerId);
+    const apps = document.getElementById('wk-apps');
+    const ai = document.getElementById('wk-ai');
+    const pendingBadge = document.getElementById('wk-pending');
+
+    while(token === myToken){
+      const packet = makePacket(container, colorCls);
+
+      pulse(avatar, colorCls, 700);
+      await travel(packet, portalPath, 550); if(token!==myToken){packet.remove();return;}
+      pulse(portal, colorCls, 700);
+      await travel(packet, wkPaths.portalToAuth, 420); if(token!==myToken){packet.remove();return;}
+      pulse(auth, colorCls, 650);
+      await travel(packet, wkPaths.authToOrch, 420); if(token!==myToken){packet.remove();return;}
+      pulse(orch, colorCls, 650);
+      await travel(packet, wkPaths.orchToApproval, 420); if(token!==myToken){packet.remove();return;}
+      pulse(approval, colorCls, 650);
+
+      if(user === 'B'){
+        pendingBadge.classList.remove('show'); void pendingBadge.offsetWidth; pendingBadge.classList.add('show');
+        await delay(1500);
+        if(token!==myToken){packet.remove();return;}
+      }
+
+      await travel(packet, wkPaths.approvalToCicd, 420); if(token!==myToken){packet.remove();return;}
+      pulse(cicd, colorCls, 650);
+      await travel(packet, wkPaths.cicdToQueue, 420); if(token!==myToken){packet.remove();return;}
+      pulse(queue, colorCls, 650);
+      await travel(packet, fanoutPath, 550); if(token!==myToken){packet.remove();return;}
+      pulse(worker, colorCls, 650);
+      await travel(packet, mergePath, 500); if(token!==myToken){packet.remove();return;}
+      pulse(apps, 'success', 650);
+      await travel(packet, wkPaths.appsToAi, 420); if(token!==myToken){packet.remove();return;}
+      pulse(ai, 'success', 650);
+      await delay(300);
+      await travel(packet, wkPaths.aiToPortal, 950); if(token!==myToken){packet.remove();return;}
+      pulse(portal, 'success', 600);
+      await fadeOut(packet, 250);
+      if(token!==myToken) return;
+      await delay(900 + Math.random()*600);
+    }
+  }
+
+  function runWalkthrough(myToken){
+    runWalkthroughCaptions(myToken);
+    runWalkthroughCicdHeartbeat(myToken);
+    userJourney(myToken, 'A', 'userA', 'wk-userA', wkPaths.userAToPortal, wkPaths.queueToW1, wkPaths.w1ToApps, 'wk-w1', 0);
+    userJourney(myToken, 'B', 'userB', 'wk-userB', wkPaths.userBToPortal, wkPaths.queueToW2, wkPaths.w2ToApps, 'wk-w2', 700);
+    userJourney(myToken, 'C', 'userC', 'wk-userC', wkPaths.userCToPortal, wkPaths.queueToW3, wkPaths.w3ToApps, 'wk-w3', 1400);
+  }
+
+  // ===================================================================
+  // OWNERSHIP & ROLLOUT LOOP
+  // ===================================================================
+  const ownStepText = [
+    'Genie Bot is our tool — the portal, orchestrator, approval engine, queue, and AI layer are ours to design, build, and run.',
+    'Only two things on this diagram need IT: plugging into enterprise SSO, and hosting capacity for the worker pool.',
+    'That makes this a business team asking for a narrow infrastructure partnership — not an IT project asking to take over a tool we already run.',
+    'A joint steering group — our business sponsor plus an IT infrastructure sponsor — keeps ownership clear and unblocks just those two asks.',
+    'Pilot first, on the smallest footprint we can get approved — then bring working numbers, not just a diagram, when asking IT to scale hosting for the rest.'
+  ];
+  const ownedIds = ['own-portal','own-orch','own-approval','own-cicd','own-queue','own-ai'];
+  const partnerIds = ['own-auth','own-workers'];
+
+  async function runOwnership(myToken){
+    const dotsEls = document.querySelectorAll('#own-dots i');
+    const captionEl = document.getElementById('own-caption');
+    let i = 0;
+    while(token === myToken){
+      captionEl.innerHTML = ownStepText[i];
+      dotsEls.forEach(function(d, idx){ d.classList.toggle('on', idx === i); });
+
+      if(i === 0){
+        ownedIds.forEach(function(id){ pulse(document.getElementById(id), null, 1600); });
+      } else if(i === 1){
+        partnerIds.forEach(function(id){ pulse(document.getElementById(id), null, 1600); });
+      }
+
+      i = (i + 1) % ownStepText.length;
+      await delay(2700);
+    }
+  }
+
+  // ---------- mode switching ----------
+  const btnCurrent = document.getElementById('btn-current');
+  const btnFuture = document.getElementById('btn-future');
+  const btnMigration = document.getElementById('btn-migration');
+  const btnWalkthrough = document.getElementById('btn-walkthrough');
+  const btnOwnership = document.getElementById('btn-ownership');
+  const sceneCurrent = document.getElementById('scene-current');
+  const sceneFuture = document.getElementById('scene-future');
+  const sceneMigration = document.getElementById('scene-migration');
+  const sceneWalkthrough = document.getElementById('scene-walkthrough');
+  const sceneOwnership = document.getElementById('scene-ownership');
+  const legendCurrent = document.getElementById('legend-current');
+  const legendFuture = document.getElementById('legend-future');
+  const legendMigration = document.getElementById('legend-migration');
+  const legendWalkthrough = document.getElementById('legend-walkthrough');
+  const legendOwnership = document.getElementById('legend-ownership');
+  const migCaption = document.getElementById('mig-caption');
+  const wkCaption = document.getElementById('wk-caption');
+  const wkDots = document.getElementById('wk-dots');
+  const ownCaption = document.getElementById('own-caption');
+  const ownDots = document.getElementById('own-dots');
+  const readouts = document.getElementById('readouts');
+  const subline = document.getElementById('subline');
+  const r1 = document.getElementById('r1'), r2 = document.getElementById('r2'), r3 = document.getElementById('r3');
+
+  const allScenes = [sceneCurrent, sceneFuture, sceneMigration, sceneWalkthrough, sceneOwnership];
+  const allLegends = [legendCurrent, legendFuture, legendMigration, legendWalkthrough, legendOwnership];
+  const allBtns = [btnCurrent, btnFuture, btnMigration, btnWalkthrough, btnOwnership];
+  const allExtras = [migCaption, wkCaption, wkDots, ownCaption, ownDots];
+
+  function activate(btn){
+    allBtns.forEach(function(b){ b.classList.remove('on'); b.setAttribute('aria-selected','false'); });
+    btn.classList.add('on'); btn.setAttribute('aria-selected','true');
+  }
+  function showScene(scene, legend, extrasToShow){
+    allScenes.forEach(function(s){ s.classList.add('hidden'); });
+    allLegends.forEach(function(l){ l.classList.add('hidden'); });
+    allExtras.forEach(function(e){ e.classList.add('hidden'); });
+    scene.classList.remove('hidden');
+    legend.classList.remove('hidden');
+    (extrasToShow || []).forEach(function(e){ e.classList.remove('hidden'); });
+  }
+
+  function goCurrent(){
+    token++;
+    activate(btnCurrent);
+    showScene(sceneCurrent, legendCurrent);
+    readouts.classList.remove('hidden');
+    readouts.querySelectorAll('.readout').forEach(function(el){ el.classList.add('dim'); });
+    r1.textContent='--'; r2.textContent='--'; r3.textContent='--';
+    subline.textContent = 'One Genie Bot job, one desktop — multiply that by ~250 bots and many users, and nobody downstream can see whether it actually worked, or whether two people just triggered the same one.';
+    runCurrent(token);
+  }
+  function goFuture(){
+    token++;
+    activate(btnFuture);
+    showScene(sceneFuture, legendFuture);
+    readouts.classList.remove('hidden');
+    readouts.querySelectorAll('.readout').forEach(function(el){ el.classList.remove('dim'); });
+    subline.textContent = 'The same ~250 bots, built from the existing GitHub codebase, run on an auto-scaling worker pool — many users, many jobs, at once — watched end to end and self-healed when one fails.';
+    runFuture(token);
+  }
+  function goMigration(){
+    token++;
+    activate(btnMigration);
+    showScene(sceneMigration, legendMigration, [migCaption]);
+    readouts.classList.add('hidden');
+    subline.textContent = 'Each task that runs on a user\u2019s desktop today has a direct replacement on the platform — the same ~250 bots, still sourced from GitHub, now centrally managed and multi-user ready.';
+    runMigration(token);
+  }
+  function goWalkthrough(){
+    token++;
+    activate(btnWalkthrough);
+    showScene(sceneWalkthrough, legendWalkthrough, [wkCaption, wkDots]);
+    readouts.classList.add('hidden');
+    subline.textContent = 'Three users, three teams, one platform — each logs in, gets approved where needed, and their job runs on a shared, auto-scaling pool instead of their own desktop.';
+    runWalkthrough(token);
+  }
+  function goOwnership(){
+    token++;
+    activate(btnOwnership);
+    showScene(sceneOwnership, legendOwnership, [ownCaption, ownDots]);
+    readouts.classList.add('hidden');
+    subline.textContent = 'Genie Bot is already ours — this is what we keep building and running ourselves, versus the two things we need IT to partner on.';
+    runOwnership(token);
+  }
+
+  btnCurrent.addEventListener('click', goCurrent);
+  btnFuture.addEventListener('click', goFuture);
+  btnMigration.addEventListener('click', goMigration);
+  btnWalkthrough.addEventListener('click', goWalkthrough);
+  btnOwnership.addEventListener('click', goOwnership);
+
+  // initial state
+  goCurrent();
+})();
+</script>
+</body>
+</html>
