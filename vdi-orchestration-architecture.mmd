@@ -1,0 +1,58 @@
+flowchart TB
+    subgraph Client["Dashboard / User Layer"]
+        UI["React Dashboard<br/>(job status, logs, trigger controls)"]
+    end
+
+    subgraph Central["Central Orchestration Server (FastAPI)"]
+        API["REST API<br/>POST /jobs · GET /jobs/id/status · POST /heartbeat"]
+        Queue["Job Queue<br/>(Celery + Redis / APScheduler)"]
+        Registry[("Job Registry DB<br/>Postgres/SQLite<br/>job_id, script, vdi_target,<br/>status, timestamps, logs_path")]
+        Monitor["Heartbeat Monitor<br/>(tracks last-seen per VDI agent)"]
+        Alert["Alerting<br/>(SMTP / Teams Webhook)"]
+    end
+
+    subgraph VDI1["VDI Machine 1"]
+        Agent1["Lightweight Agent<br/>(FastAPI/Flask listener)"]
+        Bot1["Python Script / RPA Bot"]
+        Log1["Local Log File<br/>(JSON structured)"]
+    end
+
+    subgraph VDI2["VDI Machine 2"]
+        Agent2["Lightweight Agent<br/>(FastAPI/Flask listener)"]
+        Bot2["Python Script / RPA Bot"]
+        Log2["Local Log File<br/>(JSON structured)"]
+    end
+
+    subgraph VDIn["VDI Machine N"]
+        AgentN["Lightweight Agent<br/>(FastAPI/Flask listener)"]
+        BotN["Python Script / RPA Bot"]
+        LogN["Local Log File<br/>(JSON structured)"]
+    end
+
+    UI -->|"Trigger job / poll status"| API
+    API --> Registry
+    API --> Queue
+    Queue -->|"Dispatch job (REST call)"| Agent1
+    Queue -->|"Dispatch job (REST call)"| Agent2
+    Queue -->|"Dispatch job (REST call)"| AgentN
+
+    Agent1 --> Bot1 --> Log1
+    Agent2 --> Bot2 --> Log2
+    AgentN --> BotN --> LogN
+
+    Agent1 -.->|"heartbeat + status callback"| Monitor
+    Agent2 -.->|"heartbeat + status callback"| Monitor
+    AgentN -.->|"heartbeat + status callback"| Monitor
+
+    Log1 -.->|"ship logs"| Registry
+    Log2 -.->|"ship logs"| Registry
+    LogN -.->|"ship logs"| Registry
+
+    Monitor -->|"missed heartbeat / job failure"| Alert
+    Registry --> UI
+
+    style Central fill:#eef4ff,stroke:#3b5bdb
+    style VDI1 fill:#fff7e6,stroke:#e8a33d
+    style VDI2 fill:#fff7e6,stroke:#e8a33d
+    style VDIn fill:#fff7e6,stroke:#e8a33d
+    style Client fill:#f3f0ff,stroke:#7048e8
