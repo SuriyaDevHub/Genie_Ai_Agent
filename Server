@@ -1,0 +1,1 @@
+We currently have a shared server environment used by two teams. We would like to provision a separate environment for our team, ideally with isolated resources and access restricted to our team members. The environment can follow the same server configuration as the existing setup, but should have separate access controls and deployment space.
