@@ -1,0 +1,354 @@
+    if (
+        body.product_type.upper() == "FXO"
+        and body.validate_fxo
+    ):
+        # Create one validator for the complete run.
+        #
+        # rows_clean is retained by FxoValidator so grouped rules can find
+        # sibling rows for:
+        #   - omrctradeStructureid
+        #   - omrctradeDealrefid
+        #
+        # user_psid is the authenticated actor from the current request.
+        fxo_validator = FxoValidator(
+            rows_clean=rows_clean,
+            actor=user_psid,
+            role="USER",
+        )
+
+        fxo_cache = CsvFxoValidationCache(
+            csv_path=FXO_LIVE_CSV_PATH
+        )
+
+        fxo_algo_version = "fxo_rules_v1"
+
+        def _fxo_ui_row_from_global_hit(
+            row: Dict,
+            hit: Dict,
+        ) -> Dict:
+            return _ui_row_all_epe(
+                "FXO",
+                row,
+                result=str(
+                    hit.get("status") or ""
+                ),
+                reasoncode=str(
+                    hit.get("reasoncode") or ""
+                ),
+                comment=str(
+                    hit.get("reason") or ""
+                ),
+                rule_id=str(
+                    hit.get("rule_id") or ""
+                ),
+                cache_hit=True,
+            )
+
+        clear_n = 0
+        alert_n = 0
+        skip = defaultdict(int)
+
+        candidates: List[Dict] = []
+        candidate_eids: List[str] = []
+
+        for row in rows_clean:
+            exception_id = str(
+                row.get("exceptionId") or ""
+            ).strip()
+
+            if not exception_id:
+                continue
+
+            candidates.append(row)
+            candidate_eids.append(exception_id)
+
+        cached = fxo_cache.get_many(candidate_eids)
+
+        # FXO is rule-based. Existing live results are reused and only records
+        # absent from the live cache are evaluated.
+        validate_eids: Set[str] = {
+            exception_id
+            for exception_id in candidate_eids
+            if exception_id not in cached
+        }
+
+        fxo_total_expected = len(validate_eids)
+        fxo_processed = 0
+
+        _progress_set(
+            "fxo:validating",
+            processed=fxo_processed,
+            total=fxo_total_expected,
+        )
+
+        # --- CHANGED --------------------------------------------------------
+        # OLD: fxo_validator.validate_trade(trade) was called once per
+        # uncached row, INSIDE the `for row in candidates:` loop below — that
+        # was the N-network/engine-call bottleneck (the 575/1135, 4.3-min run
+        # you screenshotted).
+        #
+        # NEW: one batched call, made ONCE, before the loop.
+        #
+        # Built over ALL of `candidates` (not just the validate_eids subset)
+        # on purpose: OAR-FXO-004/005/006 are self-group rules that broadcast
+        # a parent leg's threshold/PnL to its sibling legs by grouping on
+        # dealref/structure id. If a dealref's legs are split across cached
+        # and uncached rows, the uncached leg still needs its cached sibling
+        # present in the SAME batch to group correctly — that's exactly why
+        # the constructor above already hands FxoValidator the full
+        # rows_clean, not just the uncached rows. Passing only validate_eids
+        # here would silently break that grouping for any split group.
+        # validate_many() still costs one call either way, so there's no
+        # performance downside to including the cached rows too.
+        #
+        # record_id_field is omitted so results come back keyed by list
+        # index (as a string) matching `candidates`' own order — this avoids
+        # depending on whatever field name _fxo_trade_from_epe uses (or
+        # doesn't preserve) for the exception id.
+        trades = [_fxo_trade_from_epe(row) for row in candidates]
+        fxo_results_by_index = fxo_validator.validate_many(trades)
+        # ---------------------------------------------------------------------
+
+        fxo_rows_out: List[Dict] = []
+        fxo_upserts: List[Dict] = []
+
+        for i, row in enumerate(candidates):
+            _check_cancel()
+
+            exception_id = str(
+                row.get("exceptionId") or ""
+            ).strip()
+
+            hit = cached.get(exception_id)
+
+            # Existing live result: do not run the validator again.
+            if (
+                hit
+                and exception_id not in validate_eids
+            ):
+                fxo_rows_out.append(
+                    _fxo_ui_row_from_global_hit(
+                        row,
+                        hit,
+                    )
+                )
+
+                status = str(
+                    hit.get("status") or ""
+                ).upper()
+
+                if status == "CLEAR":
+                    clear_n += 1
+                else:
+                    alert_n += 1
+
+                skip["already_in_global_live"] += 1
+                continue
+
+            key = _pick_key(
+                row,
+                _get_fields("FXO"),
+            )
+
+            key = (
+                str(key or "").strip().upper()
+                or "NULL"
+            )
+
+            trade_dt = (
+                # <- unchanged: your existing trade_dt computation goes here,
+                #    exactly as it is in your file today (not fully visible
+                #    in the screenshots, so not reproduced here to avoid
+                #    guessing it wrong — leave this line as your original).
+            )
+
+            trade_id = str(
+                row.get("uctradePtstradeid") or ""
+            ).strip()
+
+            dealref = str(
+                row.get("omrctradeDealrefid") or ""
+            ).strip()
+
+            # --- CHANGED ------------------------------------------------
+            # OLD:
+            #   trade = _fxo_trade_from_epe(row)
+            #   result = fxo_validator.validate_trade(trade)
+            #
+            # NEW: look up the already-computed result from the one batch
+            # call made above `candidates`, instead of calling the validator
+            # again for this single row.
+            result = fxo_results_by_index[str(i)]
+            # ---------------------------------------------------------------
+
+            result_status = str(
+                result.status or "ALERT"
+            ).upper()
+
+            result_reasoncode = str(
+                result.reasoncode or ""
+            )
+
+            result_reason = str(
+                result.reason or ""
+            )
+
+            result_rule_id = str(
+                result.rule_id or ""
+            )
+
+            if result_status == "CLEAR":
+                clear_n += 1
+            else:
+                alert_n += 1
+
+            fxo_rows_out.append(
+                _ui_row_all_epe(
+                    "FXO",
+                    row,
+                    result=result_status,
+                    reasoncode=result_reasoncode,
+                    comment=result_reason,
+                    rule_id=result_rule_id,
+                    cache_hit=False,
+                )
+            )
+
+            payload = {
+                "exception_id": exception_id,
+                "trade_id": trade_id,
+                "dealref_id": dealref,
+                "trade_time": str(trade_dt),
+                "closeofbusinessdate": row.get(
+                    "omrctradeCloseofbusinessdate"
+                ),
+                "key": key,
+                "region": str(
+                    row.get("omrctradeRegion") or ""
+                ).strip().upper(),
+                "subtype": str(
+                    row.get("omrctradeProductsubtype") or ""
+                ),
+                "algo": fxo_algo_version,
+            }
+
+            upsert_row = {
+                "exception_id": exception_id,
+                "input_hash": input_hash,
+                "trade_id": trade_id,
+                "dealref_id": dealref,
+                "key": key,
+                "region": str(
+                    row.get("omrctradeRegion") or ""
+                ).strip().upper(),
+                "trade_datetime_utc": str(trade_dt),
+                "closeofbusinessdate": row.get(
+                    "omrctradeCloseofbusinessdate"
+                ),
+                "product_sub_type": str(
+                    row.get("omrctradeProductsubtype") or ""
+                ),
+                "status": result_status,
+                "reasoncode": result_reasoncode,
+                "reason": result_reason,
+                "rule_id": result_rule_id,
+                "algo_version": fxo_algo_version,
+                "validated_at_utc": utc_now_iso(),
+            }
+
+            for column in EPE_TOOL_COLUMNS:
+                upsert_row[column] = row.get(column)
+
+            fxo_upserts.append(upsert_row)
+
+            fxo_processed += 1
+
+            _progress_tick(
+                "fxo:validating",
+                fxo_processed,
+                fxo_total_expected,
+            )
+
+        _progress_set(
+            "fxo:building draft",
+            processed=fxo_processed,
+            total=fxo_total_expected,
+        )
+
+        if fxo_upserts:
+            dataset_id = (
+                meta.id
+                if meta
+                else body.epe_dataset_id
+            )
+
+            draft_id = make_draft_id(
+                "FXO",
+                user_psid,
+                dataset_id,
+            )
+
+            write_draft_csv(
+                live_csv_path=FXO_LIVE_CSV_PATH,
+                product="FXO",
+                user_psid=user_psid,
+                draft_id=draft_id,
+                rows=fxo_upserts,
+            )
+
+            resp["fxo_draft"] = {
+                "product": "FXO",
+                "draft_id": draft_id,
+            }
+        else:
+            resp["fxo_draft"] = None
+            resp["fxo_note"] = (
+                "All exceptions already exist in Global Live; "
+                "returned cached results with no new validations."
+            )
+
+        resp["fxo_columns"] = _ui_columns_all_epe(
+            "FXO"
+        )
+
+        resp["fxo_rows"] = fxo_rows_out
+
+        resp["fxo_summary"] = [
+            {
+                "label": "FXO validation",
+                "value": "enabled",
+            },
+            {
+                "label": "Rows returned",
+                "value": len(fxo_rows_out),
+            },
+            {
+                "label": "New validations",
+                "value": len(fxo_upserts),
+            },
+            {
+                "label": "Returned from Global Live",
+                "value": int(
+                    skip.get(
+                        "already_in_global_live",
+                        0,
+                    )
+                ),
+            },
+            {
+                "label": "CLEAR",
+                "value": clear_n,
+            },
+            {
+                "label": "ALERT",
+                "value": alert_n,
+            },
+        ]
+
+        resp["fxo_skip_reasons"] = dict(skip)
+
+        _progress_set(
+            "fxo:finalising",
+            processed=fxo_processed,
+            total=fxo_total_expected,
+        )
