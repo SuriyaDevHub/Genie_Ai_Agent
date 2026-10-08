@@ -1,0 +1,10 @@
+False-positive scoring: rank alerts by likelihood of being a real issue
+	•	Auto-closure suggestions: recommend closure reasons for recurring benign patterns
+	•	Anomaly detection: flag unusual trades that pass every rule
+	•	Intraday early warning: predict which intraday trades will become EOD exceptions
+	•	Root-cause clustering: group many exceptions into a few underlying causes
+	•	GenAI alert narrative: draft a plain-English explanation and next step per alert
+	•	Similar-case retrieval: show how comparable past exceptions were resolved
+	•	Threshold tuning: recommend calibrations from historical alert outcomes
+	•	Rule mining: find redundant, conflicting, or never-firing rules
+	•	Natural language to rule: turn a plain-English check into draft rule logic
