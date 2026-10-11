@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+  :root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);}
+  body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;}
+  img{max-width:100%;}
+  [hidden]{display:none!important;}
+</style>
+<title>BRV Early Warning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+/* Layout: single measured column on a cool paper ground; one full-width figure
+   breaks the measure; staged content carries a numbered left rail. */
+:root{
+  --paper:#EEF1F4;
+  --surface:#FFFFFF;
+  --sunk:#E3E8ED;
+  --ink:#13181D;
+  --soft:#555F6A;
+  --line:#CBD3DA;
+  --accent:#13686A;
+  --wash:rgba(19,104,106,.07);
+  --warn:#94600F;
+  --warn-wash:rgba(148,96,15,.10);
+  --crit:#9A3729;
+  --ok:#2C6840;
+
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --body:"Source Sans 3",-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0D1114; --surface:#161B20; --sunk:#1E252B;
+    --ink:#E4E9ED; --soft:#96A0AA; --line:#2B333A;
+    --accent:#4FB9B4; --wash:rgba(79,185,180,.12);
+    --warn:#D9A245; --warn-wash:rgba(217,162,69,.14);
+    --crit:#DE7764; --ok:#62AC79;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0D1114; --surface:#161B20; --sunk:#1E252B;
+  --ink:#E4E9ED; --soft:#96A0AA; --line:#2B333A;
+  --accent:#4FB9B4; --wash:rgba(79,185,180,.12);
+  --warn:#D9A245; --warn-wash:rgba(217,162,69,.14);
+  --crit:#DE7764; --ok:#62AC79;
+  color-scheme:dark;
+}
+
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:860px;margin:0 auto;padding-inline:20px;padding-block:44px 72px;}
+.full{max-width:1180px;margin:0 auto;padding-inline:20px;}
+
+h1,h2,h3,h4{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.18;letter-spacing:-.015em;}
+h1{font-size:clamp(30px,5.4vw,46px);font-weight:700;letter-spacing:-.028em;}
+h2{font-size:clamp(21px,3.2vw,27px);font-weight:600;}
+h3{font-size:17px;font-weight:600;letter-spacing:-.005em;}
+h4{font-size:14px;font-weight:600;}
+p{margin:0;}
+
+.eyebrow{
+  font-family:var(--mono);font-size:11px;font-weight:500;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
+}
+.rule{height:1px;background:var(--line);border:0;margin:0;}
+
+section{margin-top:58px;}
+.sechead{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
+.sechead .kicker{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--soft);
+}
+.lede{color:var(--soft);font-size:16.5px;max-width:62ch;}
+.stack{display:flex;flex-direction:column;gap:16px;}
+.stack-sm{display:flex;flex-direction:column;gap:10px;}
+
+/* ---------- masthead ---------- */
+.mast{display:flex;flex-direction:column;gap:18px;}
+.standfirst{font-size:19px;line-height:1.52;max-width:58ch;color:var(--ink);}
+.meta{
+  display:flex;flex-wrap:wrap;gap:8px 28px;
+  font-family:var(--mono);font-size:11.5px;color:var(--soft);
+  padding-top:16px;border-top:1px solid var(--line);
+}
+.meta b{color:var(--ink);font-weight:500;}
+
+/* ---------- the ask ---------- */
+.ask{
+  background:var(--surface);border:1px solid var(--accent);
+  border-left:4px solid var(--accent);
+  padding:24px 26px;display:flex;flex-direction:column;gap:12px;
+}
+.ask .tag{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent);
+}
+.ask p{max-width:60ch;}
+.ask .big{font-family:var(--display);font-size:21px;font-weight:600;line-height:1.3;}
+
+/* ---------- guarantee cards ---------- */
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}
+@media (max-width:640px){.grid2,.grid3{grid-template-columns:1fr;}}
+.card{
+  background:var(--surface);border:1px solid var(--line);
+  padding:18px 18px 20px;display:flex;flex-direction:column;gap:7px;min-width:0;
+}
+.card .no{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--accent);
+}
+.card p{font-size:14.5px;line-height:1.55;color:var(--soft);}
+
+/* ---------- figure ---------- */
+figure{margin:0;}
+.figscroll{overflow-x:auto;background:var(--surface);border:1px solid var(--line);padding:18px 16px;}
+.figscroll svg{display:block;width:100%;min-width:1040px;height:auto;}
+.figscroll.narrow svg{min-width:560px;}
+.figlegend{
+  display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:12px;
+  font-family:var(--mono);font-size:10.5px;color:var(--soft);
+}
+.figlegend span{display:flex;align-items:center;gap:7px;}
+.sw{width:22px;height:11px;border:1.4px solid var(--line);background:var(--surface);flex:none;}
+.sw.k{border-color:var(--ink);border-width:1.8px;}
+.sw.ai{border-color:var(--accent);border-style:dashed;background:var(--wash);}
+.sw.hm{border-color:var(--line);background:var(--sunk);}
+figcaption{
+  margin-top:12px;font-size:14px;color:var(--soft);max-width:70ch;
+}
+.scrollhint{
+  font-family:var(--mono);font-size:10.5px;color:var(--soft);
+  margin-top:8px;display:none;
+}
+@media (max-width:900px){.scrollhint{display:block;}}
+
+svg text{font-family:var(--body);}
+.n{fill:var(--surface);stroke:var(--line);stroke-width:1.4;}
+.nk{fill:var(--surface);stroke:var(--ink);stroke-width:1.8;}
+.ai{fill:var(--wash);stroke:var(--accent);stroke-width:1.4;stroke-dasharray:5 4;}
+.hum{fill:var(--sunk);stroke:var(--line);stroke-width:1.4;}
+.absent{fill:none;stroke:var(--line);stroke-width:1.4;stroke-dasharray:4 5;}
+.tmid{fill:var(--soft);font-size:12px;text-anchor:middle;}
+.tnow{fill:var(--ink);font-size:12px;text-anchor:middle;}
+.t{fill:var(--ink);font-size:13px;text-anchor:middle;}
+.tb{fill:var(--ink);font-size:13px;font-weight:600;text-anchor:middle;}
+.ta{fill:var(--accent);font-size:13px;font-weight:600;text-anchor:middle;}
+.ts{fill:var(--soft);font-size:10px;font-family:var(--mono);text-anchor:middle;}
+.a{stroke:var(--soft);stroke-width:1.5;fill:none;}
+.ad{stroke:var(--accent);stroke-width:1.4;fill:none;stroke-dasharray:4 4;}
+.as{stroke:var(--accent);stroke-width:1.6;fill:none;}
+.bnd{stroke:var(--soft);stroke-width:1;stroke-dasharray:2 6;fill:none;}
+.lbl{fill:var(--soft);font-size:9.5px;font-family:var(--mono);}
+.lbla{fill:var(--accent);font-size:9.5px;font-family:var(--mono);}
+.cap{fill:var(--soft);font-size:10px;font-family:var(--mono);letter-spacing:.12em;}
+.capa{fill:var(--accent);font-size:10px;font-family:var(--mono);letter-spacing:.12em;}
+
+/* ---------- metric table ---------- */
+.tblwrap{overflow-x:auto;border:1px solid var(--line);background:var(--surface);}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:520px;}
+table.steps{min-width:820px;}
+table.steps td:first-child{font-weight:600;}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+th{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--soft);font-weight:500;background:var(--sunk);
+}
+tbody tr:last-child td{border-bottom:0;}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.tbd{
+  font-family:var(--mono);font-size:12px;color:var(--soft);
+  border-bottom:1px dotted var(--soft);
+}
+
+/* ---------- ladder ---------- */
+.ladder{display:flex;flex-direction:column;gap:0;}
+.rung{
+  display:grid;grid-template-columns:62px minmax(0,1fr);gap:0;
+  border-left:2px solid var(--line);
+}
+.rung:last-child{border-left-color:transparent;}
+.rung .rail{position:relative;padding-top:22px;}
+.rung .dot{
+  position:absolute;left:-9px;top:24px;width:16px;height:16px;border-radius:50%;
+  background:var(--paper);border:2px solid var(--accent);
+}
+.rung.opt .dot{border-color:var(--soft);}
+.rung .stg{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--soft);
+  padding-left:18px;padding-top:1px;
+}
+.rung .body{padding:18px 0 30px;min-width:0;}
+.rung h3{margin-bottom:4px;}
+.rung .dur{
+  font-family:var(--mono);font-size:11px;color:var(--accent);margin-bottom:10px;
+}
+.rung.opt .dur{color:var(--soft);}
+.rowlist{display:flex;flex-direction:column;gap:7px;margin-top:4px;}
+.row{display:grid;grid-template-columns:118px minmax(0,1fr);gap:12px;font-size:14.5px;}
+@media (max-width:560px){.row{grid-template-columns:1fr;gap:2px;}}
+.row dt{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--soft);padding-top:4px;
+}
+@media (max-width:560px){.row dt{padding-top:6px;}}
+.row dd{margin:0;color:var(--ink);}
+.gate{
+  margin-top:12px;background:var(--wash);border:1px solid var(--accent);
+  padding:10px 13px;font-size:14px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;
+}
+.gate b{
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);font-weight:600;
+}
+.rung.opt .gate{background:transparent;border-color:var(--line);}
+.rung.opt .gate b{color:var(--soft);}
+
+/* ---------- workbench mock ---------- */
+.mock{
+  background:var(--surface);border:1px solid var(--line);
+  font-family:var(--mono);font-size:12.5px;line-height:1.6;
+}
+.mock .bar{
+  background:var(--sunk);border-bottom:1px solid var(--line);
+  padding:9px 14px;display:flex;flex-wrap:wrap;gap:6px 16px;
+  font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);
+}
+.mock .bar b{color:var(--ink);font-weight:600;}
+.mock .inner{padding:16px 14px;display:flex;flex-direction:column;gap:14px;}
+.kv{display:grid;grid-template-columns:132px minmax(0,1fr);gap:4px 12px;}
+@media (max-width:520px){.kv{grid-template-columns:1fr;}}
+.kv dt{color:var(--soft);}
+.kv dd{margin:0;color:var(--ink);}
+.score{
+  display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:12px 0;
+}
+.score .v{
+  font-family:var(--display);font-size:30px;font-weight:700;color:var(--warn);
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+}
+.score .lab{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);}
+.reasons{display:flex;flex-direction:column;gap:6px;}
+.reason{display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;}
+.reason .b{color:var(--accent);}
+.decide{
+  background:var(--sunk);padding:11px 13px;
+  font-size:11.5px;color:var(--soft);display:flex;flex-wrap:wrap;gap:6px 14px;
+}
+.decide b{color:var(--ink);}
+
+/* ---------- objections ---------- */
+.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px;}
+@media (max-width:640px){.vs{grid-template-columns:1fr;}}
+.vs .col{border:1px solid var(--line);background:var(--surface);padding:18px;min-width:0;}
+.vs .col.now{border-left:3px solid var(--warn);}
+.vs .col.next{border-left:3px solid var(--accent);}
+.vs .col h4{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--soft);margin-bottom:12px;
+}
+.tl{display:flex;flex-direction:column;gap:9px;}
+.tl .ev{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;font-size:14.5px;line-height:1.5;}
+.tl .ev time{
+  font-family:var(--mono);font-size:11.5px;color:var(--soft);
+  font-variant-numeric:tabular-nums;padding-top:3px;
+}
+.obj{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line);}
+.qa{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:10px 26px;
+  padding:16px 0;border-bottom:1px solid var(--line);
+}
+@media (max-width:680px){.qa{grid-template-columns:1fr;gap:6px;}}
+.qa .q{font-family:var(--display);font-weight:600;font-size:15.5px;line-height:1.4;}
+.qa .q::before{content:"“";color:var(--soft);}
+.qa .q::after{content:"”";color:var(--soft);}
+.qa .ans{font-size:14.5px;color:var(--soft);}
+.qa .ans strong{color:var(--ink);font-weight:600;}
+
+/* ---------- path ---------- */
+.path{display:flex;flex-direction:column;gap:12px;counter-reset:p;}
+.step{
+  display:grid;grid-template-columns:30px minmax(0,1fr);gap:14px;
+  padding-bottom:12px;border-bottom:1px dashed var(--line);
+}
+.step:last-child{border-bottom:0;}
+.step .n2{
+  font-family:var(--mono);font-size:12px;color:var(--accent);padding-top:3px;
+  font-variant-numeric:tabular-nums;
+}
+.step h4{margin-bottom:2px;}
+.step p{font-size:14.5px;color:var(--soft);}
+
+ul.tight{margin:0;padding-left:18px;}
+ul.tight li{margin-bottom:5px;font-size:15px;}
+ul.tight li::marker{color:var(--accent);}
+
+.note{
+  font-family:var(--mono);font-size:11.5px;line-height:1.7;color:var(--soft);
+  border:1px dashed var(--line);padding:14px 16px;
+}
+.note b{color:var(--ink);font-weight:500;}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px;}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.src{display:flex;flex-direction:column;gap:12px;}
+.srcitem{
+  display:grid;grid-template-columns:132px minmax(0,1fr);gap:6px 20px;
+  padding-bottom:12px;border-bottom:1px solid var(--line);
+}
+@media (max-width:620px){.srcitem{grid-template-columns:1fr;}}
+.srcitem:last-child{border-bottom:0;}
+.srcitem .who{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--soft);padding-top:4px;
+}
+.srcitem .what{font-size:14.5px;}
+.srcitem .what b{font-weight:600;}
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="mast">
+    <h1>Catching Vault–BRV control failures before they become exceptions</h1>
+    <p class="standfirst">A phased proposal to put a prediction layer alongside two Business Rules Validation controls — ABC and counterparty validation — scoring trades at creation, grouping alerts by root cause, and proving its accuracy in shadow before anyone is asked to rely on it.</p>
+  </header>
+
+  <section>
+    <div class="ask">
+      <span class="tag">The ask, up front</span>
+      <p class="big">We are not asking you to trust a model. We are asking for four weeks to measure what the controls already do.</p>
+      <p>Phase 1 uses alert history we already hold and people we already have. Nothing changes in production. It answers four questions: how many alerts fire, how many are real, how often the same cause repeats, and how many could have been caught earlier. If the answers do not show a problem worth solving, we stop there and it has cost nothing.</p>
+      <p>Every later phase has a number attached to it, agreed with the control owner before that phase starts. We do not move on until the number is met.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="kicker">Scope</span>
+      <h2>Two controls, chosen to test two different answers</h2>
+      <p class="lede">The pair is deliberate. One will show whether a simple fix is enough. The other will show whether a model is actually needed. Either way the pilot gives a useful answer.</p>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <span class="no">CONTROL ONE</span>
+        <h3>ABC — active book check</h3>
+        <p>Checks that the book a trade is booked to is active. High volume, and the answer is always a clear yes or no. The cause is usually sitting in reference data before the trade even exists. We picked it to test the cheap answer: if simply watching book status gets most of the benefit, no model is needed, and we will say so.</p>
+      </div>
+      <div class="card">
+        <span class="no">CONTROL TWO</span>
+        <h3>Counterparty validation</h3>
+        <p>Checks the counterparty against ISD static data, using GRID ID, BERID and related identifiers. Here the answer is not always clear. A counterparty can arrive under a different spelling of its name, at the wrong level of a group, or against a record that was only half set up. Working out which legal entity was actually meant is a matching job — and matching is the one thing a model does better than a rule.</p>
+      </div>
+    </div>
+    <p class="note" style="margin-top:14px;"><b>Why the pair matters.</b> A pilot on one control only tells you whether that control got better. These two tell you something more useful: which kind of control is worth this treatment, and which is better fixed by sorting out the reference data. That is the answer that decides whether there is a programme here at all.</p>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="kicker">Scope guardrails</span>
+      <h2>Four things this proposal will not do</h2>
+      <p class="lede">These are commitments, not aspirations. They are what make the rest of the proposal reviewable.</p>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <span class="no">01</span>
+        <h3>No alert is ever suppressed</h3>
+        <p>The model never closes, hides, downgrades or filters an alert. Every rule fires exactly as it does today and every exception reaches its owning team. The model can only add information to an alert that already exists.</p>
+      </div>
+      <div class="card">
+        <span class="no">02</span>
+        <h3>The rules engine stays the control of record</h3>
+        <p>BRV logic is untouched. No model output is written back into the rules engine, and no threshold changes as a side effect of a prediction. The control evidenced to Audit is the same control.</p>
+      </div>
+      <div class="card">
+        <span class="no">03</span>
+        <h3>Every prediction carries reason codes</h3>
+        <p>A score with no explanation is unusable in a control function. Each output names the fields that drove it and the comparable history behind it, traceable to source records. Interpretable models first; no deep learning in the pilot.</p>
+      </div>
+      <div class="card">
+        <span class="no">04</span>
+        <h3>A human makes every decision</h3>
+        <p>The model ranks and explains. An analyst disposes. Accountability for the control stays with the control owner at every phase, including anything we have not asked for yet.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="kicker">The first question</span>
+      <h2>We already have these controls. What is the model adding?</h2>
+      <p class="lede">Neither control is deficient and nothing here improves its detection. ABC tests whether a book is active; counterparty validation tests a trade against ISD. Both do what they were written to do. The gap is not in what they detect — it is in everything a control is structurally unable to hold.</p>
+    </div>
+
+    <div class="ask" style="margin-bottom:22px;">
+      <span class="tag">The whole answer in one line</span>
+      <p class="big">The rule knows the policy. It does not know the history.</p>
+      <p>A control has no memory, and that is by design. It checks one trade, against one condition, at one moment, and then forgets. It does not know it raised two hundred alerts on the same book last month. It does not know how any of them were resolved. And it cannot see a cause that exists before the trade does. Everything we are proposing is built from that history — which the control itself can never use.</p>
+    </div>
+
+    <figure style="margin-top:22px;">
+      <div class="figscroll narrow">
+        <svg viewBox="0 0 920 400" role="img" aria-label="A control checks one trade, against one condition, at one moment, then forgets. Three things it has no memory of are shown as empty dashed boxes on the left, and the same three things are shown as held by the history on the right: two hundred alerts on the same book last month, how each was resolved, and the book going inactive at 09:14 before the trade existed.">
+          <rect class="nk" x="20" y="20" width="880" height="56" rx="3"/>
+          <text class="tnow" x="460" y="54" style="font-size:15px;font-weight:600">A control checks one trade, against one condition, at one moment — then forgets.</text>
+
+          <path class="bnd" d="M470,96 V356"/>
+          <text class="cap" x="230" y="118" text-anchor="middle">WHAT THE CONTROL KNOWS</text>
+          <text class="capa" x="700" y="118" text-anchor="middle">WHAT THE HISTORY KNOWS</text>
+
+          <rect class="absent" x="20" y="136" width="420" height="62" rx="3"/>
+          <text class="tmid" x="230" y="174">no memory of it</text>
+          <rect class="ai" x="500" y="136" width="400" height="62" rx="3"/>
+          <text class="tnow" x="700" y="162">200 alerts raised on this same book</text>
+          <text class="tnow" x="700" y="182">in the last month</text>
+
+          <rect class="absent" x="20" y="212" width="420" height="62" rx="3"/>
+          <text class="tmid" x="230" y="250">no record of it</text>
+          <rect class="ai" x="500" y="212" width="400" height="62" rx="3"/>
+          <text class="tnow" x="700" y="238">how every one of them was resolved</text>
+          <text class="tnow" x="700" y="258">187 were the same routine rebooking</text>
+
+          <rect class="absent" x="20" y="288" width="420" height="62" rx="3"/>
+          <text class="tmid" x="230" y="326">cannot see it</text>
+          <rect class="ai" x="500" y="288" width="400" height="62" rx="3"/>
+          <text class="tnow" x="700" y="314">the book went inactive at 09:14</text>
+          <text class="tnow" x="700" y="334">hours before the trade existed</text>
+
+          <text class="tnow" x="460" y="386" style="font-size:13px">Everything we are proposing is built from the right-hand column.</text>
+        </svg>
+      </div>
+      <figcaption>The left column is not a criticism of the control. It is what a control is: a test, not a record. The right column already exists in the alert history — it is simply not available to anything that makes a decision.</figcaption>
+    </figure>
+
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>The control does this</th><th>It cannot do this</th><th>So today it falls to</th></tr></thead>
+        <tbody>
+          <tr><td>Checks the trade in front of it, at the moment it runs</td><td>Warn you at 09:14 that every trade on that book is going to fail tonight</td><td>Nobody, unless someone happens to spot it</td></tr>
+          <tr><td>Raises one alert for every trade that fails</td><td>Notice that 200 of those alerts are the same book and the same single fix</td><td>An experienced analyst who recognises the pattern</td></tr>
+          <tr><td>Says pass or fail</td><td>Say which failures matter — a real problem, or a routine rebooking it has already seen fifty times</td><td>Analyst judgement, in whatever order the queue happens to be in</td></tr>
+          <tr><td>Matches the counterparty identifier exactly as it arrives</td><td>Work out that a slightly different name, or a parent used instead of a subsidiary, meant one particular GRID ID</td><td>A manual lookup in ISD, one entity at a time</td></tr>
+          <tr><td>Applies the same test to every trade</td><td>Tell you that most of its own alerts close as no issue, or that another rule is duplicating it</td><td>A periodic review, if one happens</td></tr>
+          <tr><td>Sends the exception to the team that owns the rule</td><td>Send it to the team that owns the cause, which for both of these is usually static data rather than trading</td><td>Reassignment, after the first team has already looked at it</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="note" style="margin-top:16px;"><b>Look down the third column.</b> The gap is already being closed — by what your most experienced people carry in their heads. That works, but it is different from one analyst to the next, it is not available to a new joiner, it is thinner on a Friday evening, and it leaves when they do. We are not proposing to replace that judgement. We are proposing to write it down so the queue can use it.</p>
+
+    <h3 style="margin:36px 0 2px;">The same day, twice</h3>
+    <p class="lede">One book moved to inactive-pending at 09:14. Six trades were booked to it before anyone noticed.</p>
+    <div class="vs">
+      <div class="col now">
+        <h4>Today</h4>
+        <div class="tl">
+          <div class="ev"><time>09:14</time><span>Book CF-2291 set to inactive-pending in reference data. No one downstream is told.</span></div>
+          <div class="ev"><time>09:20</time><span>Trading continues. Six trades are booked to it through the day.</span></div>
+          <div class="ev"><time>18:30</time><span>ABC fires six times. Every alert is correct.</span></div>
+          <div class="ev"><time>next day</time><span>Six exceptions are worked, possibly by different people, each investigated from scratch. Five were a routine rebooking, one was a genuine late trade that nobody has yet separated from the other five.</span></div>
+        </div>
+      </div>
+      <div class="col next">
+        <h4>With the layer</h4>
+        <div class="tl">
+          <div class="ev"><time>09:14</time><span>The status change is picked up.</span></div>
+          <div class="ev"><time>09:20</time><span>One item appears in the fix queue: this book, this change, open flow against it, here is what happened the last fourteen times.</span></div>
+          <div class="ev"><time>by 11:00</time><span>Ops confirms with the desk and rebooks. Five of the six never become exceptions.</span></div>
+          <div class="ev"><time>18:30</time><span>ABC fires once, on the genuine late trade — which is now the only thing anyone has to investigate.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="note" style="margin-top:16px;"><b>Say this part out loud too.</b> For a deterministic control like ABC, a good deal of that left-hand column is fixed by watching reference data, which is a rule rather than a model. If Phase 1 shows a simple ISD and book-status watch captures most of the value, that is what we will recommend, and it will be cheaper than what we came in with. The model earns its keep on counterparty validation, where the question is not whether a record matched but which entity was meant — a matching problem with name variants, group hierarchies and incomplete onboarding in it, and one that a rule can only ever answer exactly or not at all.</p>
+  </section>
+
+</div>
+
+<div class="full">
+  <section>
+    <div class="sechead" style="max-width:860px;margin-inline:auto;">
+      <span class="kicker">The principle</span>
+      <h2>AI works around a rule, never inside it</h2>
+      <p class="lede">A control is a statement of policy, and it should stay one. So we leave the rule exactly as written and put the intelligence on three sides of it: before it runs, around how it is set, and after it fires.</p>
+    </div>
+
+    <figure>
+      <div class="figscroll">
+        <svg viewBox="0 0 1120 520" role="img" aria-label="A BRV control sits unchanged in the centre. To its left, a component predicts before the rule runs which trades will fail which control. Above it, a tuning component recommends threshold and rule changes that a person approves through normal change control. To its right, a component scores, clusters, routes and explains the alerts the rule produces. Along the bottom, analyst outcomes feed back and retrain both the before and after components.">
+          <rect class="ai" x="360" y="24" width="400" height="100" rx="3"/>
+          <text class="ta" x="560" y="50" style="font-size:13px">Around the rule — calibration</text>
+          <text class="ts" x="560" y="72">thresholds re-tuned from outcome history</text>
+          <text class="ts" x="560" y="88">redundant, conflicting, never-firing rules found</text>
+          <text class="lbla" x="560" y="110" text-anchor="middle">established as: below-the-line testing</text>
+
+          <rect class="ai" x="40" y="180" width="290" height="150" rx="3"/>
+          <text class="ta" x="185" y="208" style="font-size:13px">Before the rule runs</text>
+          <text class="ts" x="185" y="234">predicts which trades will fail</text>
+          <text class="ts" x="185" y="250">and which control they will fail</text>
+          <text class="ts" x="185" y="266">in time to fix them first</text>
+          <text class="lbla" x="185" y="296" text-anchor="middle">established as: pre-screening</text>
+
+          <rect class="nk" x="415" y="170" width="290" height="170" rx="3"/>
+          <text class="tb" x="560" y="204" style="font-size:16px">The BRV control</text>
+          <text class="ts" x="560" y="234">unchanged by any model</text>
+          <text class="ts" x="560" y="252">fires on every trade, as today</text>
+          <text class="ts" x="560" y="270">evidenced to Audit, as today</text>
+          <text class="lbl" x="560" y="300" text-anchor="middle" fill="var(--ink)">changes only through change control</text>
+
+          <rect class="ai" x="790" y="180" width="290" height="150" rx="3"/>
+          <text class="ta" x="935" y="208" style="font-size:13px">After the rule fires</text>
+          <text class="ts" x="935" y="234">scores each alert, clusters to</text>
+          <text class="ts" x="935" y="250">root cause, predicts the owner,</text>
+          <text class="ts" x="935" y="266">drafts the explanation</text>
+          <text class="lbla" x="935" y="296" text-anchor="middle">established as: alert triage</text>
+
+          <rect class="hum" x="40" y="410" width="1040" height="78" rx="3"/>
+          <text class="tb" x="560" y="440" style="font-size:13px">Analyst outcomes — the only teacher</text>
+          <text class="ts" x="560" y="464">every disposition a person records becomes training data; the models improve because the people using them keep deciding</text>
+
+          <path class="a" d="M330,255 H411" marker-end="url(#ar2)"/>
+          <path class="a" d="M705,255 H786" marker-end="url(#ar2)"/>
+          <path class="ad" d="M560,124 V166" marker-end="url(#arA2)"/>
+          <text class="lbl" x="570" y="150" fill="var(--ink)">recommends · a person approves</text>
+          <path class="ad" d="M1040,330 V406" marker-end="url(#arA2)"/>
+          <text class="lbla" x="1032" y="372" text-anchor="end">outcomes</text>
+          <path class="ad" d="M860,410 V334" marker-end="url(#arA2)"/>
+          <text class="lbla" x="852" y="372" text-anchor="end">retrains</text>
+          <path class="ad" d="M185,410 V334" marker-end="url(#arA2)"/>
+          <text class="lbla" x="193" y="372">retrains</text>
+
+          <defs>
+            <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--soft)"/>
+            </marker>
+            <marker id="arA2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+      <p class="scrollhint">Scroll the diagram sideways →</p>
+      <figcaption>Only the top arrow touches the rule, and it carries a recommendation, not a change: a proposed threshold goes through the same approval and change control as any other rule amendment. The rule in the middle is never rewritten by a model, and is the thing the bank continues to evidence as its control.</figcaption>
+    </figure>
+
+  </section>
+
+  <section>
+    <div class="sechead" style="max-width:860px;margin-inline:auto;">
+      <span class="kicker">The workflow</span>
+      <h2>Where it sits in the Vault–BRV flow</h2>
+      <p class="lede">One claim, in one picture. The top row is today's flow and stays exactly as it is. Everything we are adding sits below the line.</p>
+    </div>
+
+    <figure>
+      <div class="figscroll">
+        <svg viewBox="0 0 1400 600" role="img" aria-label="Left to right: trade arrives, FODS creates the UC trade, Vault, BRV controls run, alerts, exceptions. Below a dashed line, two advisory components read from the flow and feed two human work queues. One arrow returns from the ops fix queue to the start, walked by a person.">
+          <defs>
+            <marker id="h1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--soft)"/></marker>
+            <marker id="h2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+          </defs>
+
+          <rect class="n" x="20" y="60" width="200" height="104" rx="3"/>
+          <text class="tb" x="120" y="98" style="font-size:14px">Trade arrives</text>
+          <text class="ts" x="120" y="124">source systems · DSL</text>
+
+          <rect class="nk" x="252" y="60" width="200" height="104" rx="3"/>
+          <text class="tb" x="352" y="92" style="font-size:14px">FODS</text>
+          <text class="ts" x="352" y="116">creates the UC trade</text>
+          <text class="ts" x="352" y="134">using ISD + book static data</text>
+
+          <rect class="n" x="484" y="60" width="200" height="104" rx="3"/>
+          <text class="tb" x="584" y="98" style="font-size:14px">Vault</text>
+          <text class="ts" x="584" y="124">one store, every asset class</text>
+
+          <rect class="nk" x="716" y="60" width="200" height="104" rx="3"/>
+          <text class="tb" x="816" y="92" style="font-size:14px">BRV controls run</text>
+          <text class="ts" x="816" y="116">ABC — active book check</text>
+          <text class="ts" x="816" y="134">counterparty validation</text>
+
+          <rect class="n" x="948" y="60" width="200" height="104" rx="3"/>
+          <text class="tb" x="1048" y="98" style="font-size:14px">Alerts</text>
+          <text class="ts" x="1048" y="124">intraday and end of day</text>
+
+          <rect class="n" x="1180" y="60" width="200" height="104" rx="3"/>
+          <text class="tb" x="1280" y="98" style="font-size:14px">Exceptions</text>
+          <text class="ts" x="1280" y="124">Snap Explorer · EPE-XACT</text>
+
+          <path class="a" d="M220,112 H244" marker-end="url(#h1)"/>
+          <path class="a" d="M452,112 H476" marker-end="url(#h1)"/>
+          <path class="a" d="M684,112 H708" marker-end="url(#h1)"/>
+          <path class="a" d="M916,112 H940" marker-end="url(#h1)"/>
+          <path class="a" d="M1148,112 H1172" marker-end="url(#h1)"/>
+
+          <path class="bnd" d="M20,215 H1380"/>
+          <text class="cap" x="800" y="207" text-anchor="middle">TODAY&#39;S FLOW ABOVE THIS LINE — UNCHANGED</text>
+          <text class="capa" x="20" y="236">EVERYTHING WE ARE ADDING</text>
+
+          <path class="ad" d="M352,164 V256" marker-end="url(#h2)"/>
+          <text class="lbla" x="360" y="205">reads</text>
+          <path class="ad" d="M1280,164 V256" marker-end="url(#h2)"/>
+          <text class="lbla" x="1288" y="205">reads</text>
+
+          <rect class="ai" x="160" y="260" width="380" height="120" rx="3"/>
+          <text class="ta" x="350" y="288" style="font-size:13.5px">Before the controls run</text>
+          <text class="ts" x="350" y="314">watches ISD and book status for changes</text>
+          <text class="ts" x="350" y="332">scores each UC trade as FODS creates it</text>
+          <text class="ts" x="350" y="350">says which control it will fail, and why</text>
+          <text class="lbla" x="350" y="372" text-anchor="middle">a warning, hours before the control runs</text>
+
+          <rect class="ai" x="960" y="260" width="400" height="120" rx="3"/>
+          <text class="ta" x="1160" y="288" style="font-size:13.5px">After the controls fire</text>
+          <text class="ts" x="1160" y="314">ranks exceptions by likelihood of a real issue</text>
+          <text class="ts" x="1160" y="332">groups them into one root cause</text>
+          <text class="ts" x="1160" y="350">suggests the owner, drafts the explanation</text>
+          <text class="lbla" x="1160" y="372" text-anchor="middle">fewer items to work, each better explained</text>
+
+          <path class="as" d="M350,380 V446" marker-end="url(#h2)"/>
+          <path class="as" d="M1160,380 V446" marker-end="url(#h2)"/>
+
+          <rect class="hum" x="160" y="450" width="380" height="110" rx="3"/>
+          <text class="tb" x="350" y="480" style="font-size:13.5px">Ops fix queue</text>
+          <text class="ts" x="350" y="504">a ranked list, worked before the controls run</text>
+          <text class="ts" x="350" y="522">fix the cause and the alert never happens</text>
+
+          <rect class="hum" x="960" y="450" width="400" height="110" rx="3"/>
+          <text class="tb" x="1160" y="480" style="font-size:13.5px">Exception workbench</text>
+          <text class="ts" x="1160" y="504">one card per cause, not one per alert</text>
+          <text class="ts" x="1160" y="522">the analyst decides, exactly as today</text>
+          <text class="lbla" x="1160" y="544" text-anchor="middle">every decision feeds back and trains the ranking</text>
+
+          <path class="a" d="M156,505 H90 V168" marker-end="url(#h1)" stroke="var(--ink)"/>
+          <text class="lbl" x="100" y="418" fill="var(--ink)">a person fixes it upstream</text>
+          <text class="lbl" x="100" y="432" fill="var(--ink)">— the only way back in</text>
+        </svg>
+      </div>
+      <div class="figlegend">
+        <span><i class="sw"></i>runs today, unchanged</span>
+        <span><i class="sw k"></i>where we attach</span>
+        <span><i class="sw ai"></i>what we are adding</span>
+        <span><i class="sw hm"></i>work a person does</span>
+      </div>
+      <p class="scrollhint">Scroll the diagram sideways →</p>
+      <figcaption>Read the top row left to right: that is today, and none of it changes. Everything new sits below the line. It reads from the row above and writes to a queue. One arrow goes back the other way, and a person walks it — someone amending a trade upstream, exactly as they do today when they spot a problem by eye. Turn everything below the line off and the top row still runs.</figcaption>
+    </figure>
+  </section>
+</div>
+
+<div class="wrap">
+
+  <section>
+    <div class="sechead">
+      <span class="kicker">Portability</span>
+      <h2>Built against the pattern, not against one control</h2>
+      <p class="lede">We attach at three points that every control process has. Nothing is hard-wired to ABC, to counterparty validation, or to one exception platform. A second team adopts it by pointing it at their own systems instead of commissioning a second build.</p>
+    </div>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>Generic stage</th><th>Here, today</th><th>What the layer needs from it</th></tr></thead>
+        <tbody>
+          <tr><td>Capture</td><td>Source systems, DSL</td><td>Nothing. The amendment a person makes lands here.</td></tr>
+          <tr><td>Enrich &amp; reconcile</td><td>FODS creating the UC trade, enriched from ISD and book static data</td><td><b>Attachment point.</b> The record and its timestamp at creation, and the static data as it stood at that moment.</td></tr>
+          <tr><td>Golden store</td><td>Vault</td><td>History for training and for comparable cases.</td></tr>
+          <tr><td>Rule validation</td><td>BRV controls — ABC and counterparty validation in scope</td><td><b>Attachment point.</b> The rule definitions and what each one tests.</td></tr>
+          <tr><td>Alerting</td><td>Intraday and EOD runs</td><td>Alert records with timestamps.</td></tr>
+          <tr><td>Exception management</td><td>Snap Explorer, EPE-XACT</td><td><b>Attachment point.</b> Exceptions and their dispositions.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note" style="margin-top:14px;"><b>Worth saying in the room.</b> Exceptions already sit in more than one platform — Snap Explorer and EPE-XACT — and one upstream cause can raise items in both on the same day. Nobody sees that today, because no single view spans them. Reading both and grouping across them is useful immediately, and it is also what makes adding a third platform later a small job rather than a new one.</p>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="kicker">Operating model</span>
+      <h2>One day, end to end</h2>
+      <p class="lede">The same ten steps, answering four different questions at once. What is touched and how it reverses. What ships first and how it is measured. Whose day changes. What happens when it breaks. The answers are in the table instead of in a meeting.</p>
+    </div>
+    <div class="tblwrap">
+      <table class="steps">
+        <caption style="caption-side:bottom;text-align:left;padding:10px 14px;font-family:var(--mono);font-size:10.5px;color:var(--soft);">◆ marks a new step. Everything else is today's process, untouched.</caption>
+        <thead><tr><th>Step</th><th>What happens</th><th>Where it runs</th><th>Who acts</th><th>If it fails</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td>Trade arrives</td><td>Source systems, DSL</td><td>No one</td><td class="num">Unchanged</td></tr>
+          <tr><td class="num">2</td><td>UC trade created and enriched</td><td>FODS</td><td>No one</td><td class="num">Unchanged</td></tr>
+          <tr><td class="num" style="color:var(--accent)">3 ◆</td><td><b>Scoring runs</b> on the new UC records, out of band</td><td>Advisory layer, reading a copy</td><td>No one</td><td>Nothing downstream waits on it. The trade proceeds exactly as today.</td></tr>
+          <tr><td class="num" style="color:var(--accent)">4 ◆</td><td><b>Fix queue populated</b> — ranked, with reason codes</td><td>New view, outside the control platforms</td><td>No one yet</td><td>Empty queue. Today's process continues.</td></tr>
+          <tr><td class="num" style="color:var(--accent)">5 ◆</td><td><b>Ops works the queue</b>, or does not</td><td>Amendments go through the existing upstream process</td><td>Ops, during existing shift hours</td><td>Ignoring the queue leaves today's outcome intact.</td></tr>
+          <tr><td class="num">6</td><td>Trade reaches the store; controls run intraday and at EOD</td><td>Vault, BRV</td><td>No one</td><td class="num">Unchanged</td></tr>
+          <tr><td class="num">7</td><td>Alerts raised, exceptions created</td><td>Snap Explorer, EPE-XACT</td><td>No one</td><td class="num">Unchanged</td></tr>
+          <tr><td class="num" style="color:var(--accent)">8 ◆</td><td><b>Triage annotates</b> — rank, cluster, suggested owner, draft narrative</td><td>Read-only over both platforms</td><td>No one</td><td>Exceptions appear unannotated, as today.</td></tr>
+          <tr><td class="num">9</td><td>Analyst investigates and disposes</td><td>The exception platform they already use</td><td>Ops analyst, under their own name</td><td class="num">Unchanged</td></tr>
+          <tr><td class="num" style="color:var(--accent)">10 ◆</td><td><b>Outcomes feed back</b> overnight; scorecard published weekly</td><td>Advisory layer</td><td>No one</td><td>Model ages until the next successful run.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note" style="margin-top:14px;"><b>Read the last column top to bottom.</b> Four of the ten steps are new. Not one of them can stop, delay or change a step that runs today. That is the whole integration risk answer, and it is why switching off a single view undoes everything.</p>
+
+    <h3 style="margin:36px 0 6px;">Answered before you ask</h3>
+    <p class="lede" style="margin-bottom:18px;">The nine questions this proposal reliably attracts, grouped by who usually asks them.</p>
+    <div class="grid3">
+      <div class="card"><span class="no">CHANGE</span><h3>Does anything live depend on it?</h3><p>No. The layer reads copies and writes to its own view. No code change to FODS, Vault, BRV or either exception platform in Phases 1 to 3. If it is down or late, the day runs as it does today.</p></div>
+      <div class="card"><span class="no">CHANGE</span><h3>What is the rollback?</h3><p>Switch the view off. There is no data migration to reverse and no state to unwind, because the existing process never stopped running underneath it.</p></div>
+      <div class="card"><span class="no">CHANGE</span><h3>Who signs off what?</h3><p>Control owner for the control, ops lead for the queue, Model Risk for the model, this team for delivery. The split is written down in Phase 1, before any model exists.</p></div>
+      <div class="card"><span class="no">PRODUCT</span><h3>What is the first release?</h3><p>One control, one asset class: a ranked queue and a reason-code panel. Drafted narratives and cross-platform clustering are later increments, not part of the first thing that ships.</p></div>
+      <div class="card"><span class="no">PRODUCT</span><h3>How is value measured?</h3><p>Exceptions prevented before the control run, and median time to clear the ones that still happen. Both are baselined in Phase 1, so the improvement is arguable from numbers rather than asserted.</p></div>
+      <div class="card"><span class="no">PRODUCT</span><h3>What is the next team after this one?</h3><p>Whichever control owner wants it. The layer attaches to three generic stages, so a second adopter points it at their own systems rather than commissioning a second build.</p></div>
+      <div class="card"><span class="no">OPS</span><h3>Does my team get more work?</h3><p>The queue moves work earlier in the day rather than adding to it, and nothing is added to the exception queue itself. Phase 3 measures net analyst time; if it goes up, the gate fails.</p></div>
+      <div class="card"><span class="no">OPS</span><h3>What if a prediction is wrong?</h3><p>A false alarm costs the minutes spent looking at one item. A miss returns you to exactly today's process, because the control fires regardless. Neither case is worse than the status quo.</p></div>
+      <div class="card"><span class="no">TECH</span><h3>Batch or real time?</h3><p>Scheduled batch runs. The window between UC creation and the control run is hours, so there is no streaming, no latency SLA, and no component of ours in a critical path.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="kicker">The plan</span>
+      <h2>Four phases, each with a decision point</h2>
+      <p class="lede">Only the first is being requested. Each phase ends with a measured result and an explicit choice to continue or stop, so the programme can be halted at three points before anything is relied on operationally.</p>
+    </div>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>Phase</th><th>Time</th><th>What you get at the end</th><th>Decision</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>1 · Baseline</b></td><td class="num">4 weeks</td>
+            <td>Measured facts about our own alerts: volume, how many are real, how many share one cause, how many could have been caught earlier. No model is built.</td>
+            <td class="num">Proceed or stop</td>
+          </tr>
+          <tr>
+            <td><b>2 · Shadow</b></td><td class="num">8 weeks</td>
+            <td>Accuracy proven against real outcomes, with predictions logged before the outcome was known. Nothing visible to anyone working a queue.</td>
+            <td class="num">Proceed or stop</td>
+          </tr>
+          <tr>
+            <td><b>3 · Advisory</b></td><td class="num">8 weeks</td>
+            <td>Predictions visible to analysts on one desk, who may act on them or ignore them. Every alert is still raised in full.</td>
+            <td class="num">Proceed or stop</td>
+          </tr>
+          <tr>
+            <td><b>4 · Extend</b></td><td class="num">ongoing</td>
+            <td>Further controls, asset classes and teams, each proven the same way before it goes live.</td>
+            <td class="num">Governance sign-off</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note" style="margin-top:14px;"><b>What makes the gates real.</b> The accuracy thresholds for each phase are agreed with the control owner before that phase begins, not argued about afterwards. A phase that misses its number ends the programme rather than extending it.</p>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="kicker">Phase 1 output</span>
+      <h2>The baseline we do not have yet</h2>
+      <p class="lede">Nobody can approve a benefit case against numbers nobody has measured. Phase 1 exists to fill this table in — separately for ABC and for counterparty validation, since the whole point of running both is to compare them — with the control owner agreeing each figure before anything else is discussed.</p>
+    </div>
+    <div class="tblwrap">
+      <table>
+        <thead>
+          <tr><th>Measure (per control)</th><th>How we get it</th><th>Today</th><th>Target</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>BRV alerts raised per day</td><td>Alert log, 24 months, by rule and asset class</td><td class="num"><span class="tbd">to measure</span></td><td class="num">unchanged</td></tr>
+          <tr><td>Share closed as no issue</td><td>Disposition codes on closed exceptions</td><td class="num"><span class="tbd">to measure</span></td><td class="num"><span class="tbd">set at gate</span></td></tr>
+          <tr><td>Alerts sharing one root cause</td><td>Clustering of historic alerts by book, cpty, source</td><td class="num"><span class="tbd">to measure</span></td><td class="num"><span class="tbd">set at gate</span></td></tr>
+          <tr><td>Split of intraday vs EOD alerts</td><td>Alert type, and UC creation time vs alert raise time</td><td class="num"><span class="tbd">to measure</span></td><td class="num">—</td></tr>
+          <tr><td>EOD alerts that were predictable intraday</td><td>Replay: was the cause visible at UC creation?</td><td class="num"><span class="tbd">to measure</span></td><td class="num"><span class="tbd">set at gate</span></td></tr>
+          <tr><td>One cause raising items in both platforms</td><td>Match Snap Explorer and EPE-XACT items on book, cpty, source</td><td class="num"><span class="tbd">to measure</span></td><td class="num"><span class="tbd">set at gate</span></td></tr>
+          <tr><td>Median time to clear an exception</td><td>Raise-to-close, by platform and by team</td><td class="num"><span class="tbd">to measure</span></td><td class="num"><span class="tbd">set at gate</span></td></tr>
+          <tr><td>Counterparty failures that were a matching issue</td><td>Resolution notes on closed CPTY exceptions: wrong entity level, name variant, incomplete ISD setup</td><td class="num"><span class="tbd">to measure</span></td><td class="num"><span class="tbd">set at gate</span></td></tr>
+          <tr><td>Breaches missed by the controls</td><td>Issues found by other means, logged after the fact</td><td class="num"><span class="tbd">to measure</span></td><td class="num">no increase</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note" style="margin-top:14px;"><b>Why this table is empty.</b> Putting invented numbers in a management pack is the fastest way to lose the room, and the first question will be where they came from. The honest version — a measurement plan with named owners for each figure — is also the version that survives challenge.</p>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="kicker">Make it concrete</span>
+      <h2>What an analyst actually sees</h2>
+      <p class="lede">Abstract talk about models is where these proposals die. Put these two on the screen in the meeting — one per control — and let people challenge the lines. Every line is meant to be challengeable.</p>
+    </div>
+
+    <div class="mock">
+      <div class="bar">
+        <span>Pre-cut-off fix queue</span>
+        <span><b>Rank 3 of 41</b></span>
+        <span>14:22 · before the intraday run</span>
+      </div>
+      <div class="inner">
+        <dl class="kv">
+          <dt>UC trade ref</dt><dd>UC-2026-10-0048812</dd>
+          <dt>Book</dt><dd>CF-2291 · GDM Cash Bonds</dd>
+          <dt>Counterparty</dt><dd>CPTY-004417</dd>
+          <dt>Source</dt><dd>DSL → FODS · UC created 14:06 · in Vault 14:11</dd>
+        </dl>
+
+        <div class="score">
+          <span class="v">0.87</span>
+          <span class="lab">predicted to fail&nbsp; ABC — active book check</span>
+        </div>
+
+        <div class="reasons">
+          <div class="reason"><span class="b">›</span><span>Book CF-2291 moved to <b>inactive-pending</b> in reference data at 09:14 today; 6 trades already booked to it since.</span></div>
+          <div class="reason"><span class="b">›</span><span>Same book failed ABC on 11 of the last 30 business days.</span></div>
+          <div class="reason"><span class="b">›</span><span>Of 14 comparable cases, 13 were resolved by rebooking to the successor book; 1 was a genuine late trade.</span></div>
+        </div>
+
+        <dl class="kv">
+          <dt>Suggested action</dt><dd>Confirm book status with the desk and rebook, or this raises an ABC alert intraday and an exception at EOD.</dd>
+          <dt>Would clear</dt><dd>This item and 5 others on the same book — one cause, six alerts, across both exception platforms.</dd>
+        </dl>
+
+        <div class="decide">
+          <span><b>Model</b> ranks and explains</span>
+          <span><b>Analyst</b> decides and disposes</span>
+          <span><b>BRV</b> fires regardless at EOD</span>
+        </div>
+      </div>
+    </div>
+    <div class="mock" style="margin-top:18px;">
+      <div class="bar">
+        <span>Pre-control fix queue</span>
+        <span><b>Rank 1 of 41</b></span>
+        <span>10:42 · counterparty validation</span>
+      </div>
+      <div class="inner">
+        <dl class="kv">
+          <dt>UC trade ref</dt><dd>UC-2026-10-0048790</dd>
+          <dt>Cpty as presented</dt><dd>"Meridian Capital Markets (Asia) Pte"</dd>
+          <dt>ISD match</dt><dd>no active BERID at the level presented</dd>
+          <dt>Source</dt><dd>DSL → FODS · UC created 10:31</dd>
+        </dl>
+
+        <div class="score">
+          <span class="v">0.93</span>
+          <span class="lab">predicted to fail&nbsp; counterparty validation</span>
+        </div>
+
+        <div class="reasons">
+          <div class="reason"><span class="b">›</span><span>Closest active ISD entity by name, country and sector is the <b>group parent</b>, GRID ID 70-441-882 — the Singapore subsidiary was onboarded 3 days ago and still has no BERID.</span></div>
+          <div class="reason"><span class="b">›</span><span>9 of the last 11 trades presented under this name were rebooked to the subsidiary once its setup completed.</span></div>
+          <div class="reason"><span class="b">›</span><span>Confidence in the suggested entity match: <b>high</b>. Confidence that the record is incomplete rather than wrong: <b>high</b>.</span></div>
+        </div>
+
+        <dl class="kv">
+          <dt>Suggested action</dt><dd>Confirm the intended legal entity with the desk and complete the BERID setup in ISD.</dd>
+          <dt>Would clear</dt><dd>This and 4 other pending trades against the same entity.</dd>
+        </dl>
+
+        <div class="decide">
+          <span><b>Model</b> suggests the entity</span>
+          <span><b>Analyst</b> confirms and sets it up</span>
+          <span><b>The control</b> validates regardless</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="note" style="margin-top:14px;"><b>Read the last line of each card aloud in the meeting.</b> The control still runs whatever the analyst does, and still decides. The model only bought the hours to fix the cause first. Note also the difference between the two cards: the first is a fact that a watch could have spotted, the second is a judgement about which legal entity was meant. That difference is the whole argument for running both controls in the pilot.</p>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="kicker">Prerequisites</span>
+      <h2>What has to be true before any of this works</h2>
+    </div>
+
+    <div class="ask" style="border-color:var(--crit);margin-bottom:20px;">
+      <span class="tag" style="color:var(--crit)">The two that can kill it</span>
+      <p><b>We need to know which past alerts were real.</b> The models learn from how exceptions were closed. If almost everything is closed under one generic code, there is nothing to learn from. Then the honest answer is that this cannot be built yet, and the first fix is better closure codes, not a model.</p>
+      <p><b>We need a key that joins the records.</b> To show that one cause raised items in both Snap Explorer and EPE-XACT, we need an identifier that follows a trade through FODS, Vault, the alert and both exception records. Without one, grouping across platforms is out of scope.</p>
+      <p>Both are checked in the first two weeks of Phase 1, before anything is committed. Finding out they fail is a cheap and useful result.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>Data</h3>
+        <ul class="tight">
+          <li>24 months of alerts and exceptions for both controls, with disposition codes and free-text resolution notes</li>
+          <li>UC trade records with creation timestamps from FODS</li>
+          <li>ISD and book static data as a change history, point in time — not just the current state</li>
+          <li>Rule definitions: what each control tests and against which fields</li>
+          <li>For counterparty matching: entity names, aliases and group hierarchy, not identifiers alone</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Point-in-time correctness</h3>
+        <ul class="tight">
+          <li>Features must reflect what was knowable at UC creation, not what is known now</li>
+          <li>Reference data read as at the trade timestamp</li>
+          <li>Without this the shadow results will look excellent and mean nothing</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Environment &amp; access</h3>
+        <ul class="tight">
+          <li>Read entitlements to both exception platforms, FODS and Vault</li>
+          <li>A compute environment with an approved Python package mirror</li>
+          <li>Somewhere durable to write the prediction log</li>
+          <li>Internal LLM gateway access, only from Phase 3</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Governance &amp; people</h3>
+        <ul class="tight">
+          <li>Model inventory entry and risk tiering, opened at Phase 2</li>
+          <li>Data access approvals and a named information owner</li>
+          <li>Around two hours a week from a control SME</li>
+          <li>An exception analyst to validate a sample of labels</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="kicker">Approach</span>
+      <h2>How this gets a yes</h2>
+      <p class="lede">Proposals like this rarely fail on the idea. They fail because the governance conversation starts after the pitch instead of inside it. So we answer those questions first, and the review becomes a confirmation rather than a discovery.</p>
+    </div>
+
+    <div class="stack">
+      <div class="card">
+        <span class="no">01</span>
+        <h3>Bring the risk classification already done</h3>
+        <p>The question has shifted from "is this a model?" to "what is the risk?", and many firms now register analytical tools as models by default. So we will not spend the meeting on that boundary. We arrive with the assessment filled in and accept whichever tier the assessor applies.</p>
+      </div>
+      <div class="card">
+        <span class="no">02</span>
+        <h3>Never score a person</h3>
+        <p>Everything is scored at book, counterparty, instrument or source-system level. Nothing is scored by trader or by individual. Profiling people is the one choice that pushes an internal tool into the most heavily regulated bracket, and nothing here needs it. We rule it out now and say so, because a limit we volunteer reads very differently from one imposed on us.</p>
+      </div>
+      <div class="card">
+        <span class="no">03</span>
+        <h3>Use the words the assessment will use</h3>
+        <p>An internal AI system is judged on four tests: does it do a narrow procedural task, does it improve work a person already does, does it spot patterns without displacing a human judgement, and is it preparatory rather than the decision itself. All four describe this. We write the scope in those words from the first draft, so the classification argues itself.</p>
+      </div>
+      <div class="card">
+        <span class="no">04</span>
+        <h3>Commit to the four evidence activities</h3>
+        <p>Test before use, monitor during use, independent review by someone who is neither the owner nor a user, and remediate what is found. The substance of a review is documented evidence that these four actually happened. Offering them before being asked removes most of the negotiation.</p>
+      </div>
+      <div class="card">
+        <span class="no">05</span>
+        <h3>Make Model Risk and Compliance co-authors</h3>
+        <p>Show them the workflow while the design can still change, and ask what would worry them. Supervisors have said plainly that engaging early on a pilot is welcome, and that a pilot which uncovers a gap is not itself a criticism — which is exactly what the shadow phase is. An assessor who helped shape the design does not need to be convinced of it later.</p>
+      </div>
+      <div class="card">
+        <span class="no">06</span>
+        <h3>Ask for the smallest reversible thing</h3>
+        <p>The request on the table is four weeks of analysis on data already held. Not a programme, not a platform, not a budget line. Every later phase is a separate decision made with evidence that does not exist yet.</p>
+      </div>
+    </div>
+
+    <h3 style="margin:32px 0 12px;">The assessment, pre-filled</h3>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>Dimension</th><th>Our proposed answer</th><th>Basis</th></tr></thead>
+        <tbody>
+          <tr><td>Model or tool</td><td>Register as a model or critical tool from Phase 2</td><td>We are not going to argue the boundary; govern it at the stricter reading</td></tr>
+          <tr><td>Impact if wrong</td><td class="num">Low</td><td>No control decision depends on the output; the worst case of a wrong prediction is today's process</td></tr>
+          <tr><td>Pervasiveness</td><td class="num">Low</td><td>Two controls, one asset class, one desk, one ops team</td></tr>
+          <tr><td>Explainability</td><td class="num">High</td><td>Tree ensembles with reason codes, no third-party model, no language model anywhere in scoring</td></tr>
+          <tr><td>Autonomy</td><td class="num">None</td><td>A person disposes of every item; nothing closes itself</td></tr>
+          <tr><td>Profiling of individuals</td><td class="num">None</td><td>Features are book, counterparty, instrument and source only — never trader-level</td></tr>
+          <tr><td>Data leaving the bank</td><td class="num">None</td><td>Internal sources, internal compute, no external service</td></tr>
+          <tr><td>Reversibility</td><td class="num">Full</td><td>Switching off a view restores the current process exactly</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="kicker">Controls</span>
+      <h2>Governance, in the bank's own language</h2>
+      <p class="lede">Half the resistance to an AI proposal is the suspicion that it has not been thought through as a controlled change. Arriving with this already mapped removes the objection before it is raised.</p>
+    </div>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>Requirement</th><th>How this proposal answers it</th></tr></thead>
+        <tbody>
+          <tr><td>Model inventory &amp; tiering</td><td>Registered at Phase 2 as a non-control, advisory model, with a named accountable owner from the first day of Phase 1.</td></tr>
+          <tr><td>Scope of what is scored</td><td>Books, counterparties, instruments and source systems. No individual is scored, profiled or ranked, in this or any later phase.</td></tr>
+          <tr><td>Independent review</td><td>Validation by someone who is neither the model owner nor a user, with documented evidence of testing before use and monitoring during use.</td></tr>
+          <tr><td>Explainability</td><td>SHAP reason codes on every prediction, traceable to source fields. Tree ensembles only; no deep learning, and no language model anywhere in the scoring path.</td></tr>
+          <tr><td>Reproducibility</td><td>Model version, feature set, training window and random seed logged per prediction in MLflow, so any score can be reproduced on demand.</td></tr>
+          <tr><td>Challenger / benchmark</td><td>The current rules-only process is the benchmark. The model must beat it on the agreed measures or the gate fails.</td></tr>
+          <tr><td>Performance monitoring</td><td>Weekly scorecard from Phase 2 onward; drift alerting on inputs and on accuracy, with a named owner.</td></tr>
+          <tr><td>Human in the loop</td><td>Mandatory at every stage. No automated disposition is in scope.</td></tr>
+          <tr><td>Audit trail</td><td>Every prediction, reason code, model version and analyst action logged and reproducible, retained to policy.</td></tr>
+          <tr><td>Data lineage &amp; residency</td><td>Existing internal sources only, inside existing permissions. No new data, no client data leaving the bank, no external model service.</td></tr>
+          <tr><td>Change control</td><td>Model versions released through the same change process as the dashboards this team already runs.</td></tr>
+          <tr><td>Kill switch</td><td>Turning the layer off restores today's process exactly, because today's process never stopped running underneath it.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="kicker">Preparation</span>
+      <h2>What they will ask, and the answer</h2>
+      <p class="lede">Rehearse these. The questions are predictable, and answering them crisply in the room is most of what decides the outcome.</p>
+    </div>
+    <div class="obj">
+      <div class="qa">
+        <div class="q">What if the model misses a real breach?</div>
+        <div class="ans">Then the rule catches it at EOD, exactly as it does today. <strong>The worst case of a wrong prediction is the current process.</strong> The model can only add an earlier warning; it cannot take a later one away.</div>
+      </div>
+      <div class="qa">
+        <div class="q">This is a black box. How do I explain it to the regulator?</div>
+        <div class="ans">You explain the rules, because the rules are still the control. The model is a workflow aid outside the control boundary, registered and monitored, and every output it produces names the fields behind it.</div>
+      </div>
+      <div class="qa">
+        <div class="q">I do not want AI making control decisions.</div>
+        <div class="ans">Neither do we. <strong>It makes none.</strong> It reorders a work queue and writes an explanation. Every disposition is an analyst's, logged under their name, as it is today.</div>
+      </div>
+      <div class="qa">
+        <div class="q">Our data quality will not support this.</div>
+        <div class="ans">Possibly. Phase 2 answers that in eight weeks using data we already hold, with nothing in production and no spend committed. A shadow run that fails is a cheap, useful answer.</div>
+      </div>
+      <div class="qa">
+        <div class="q">We have seen AI pilots that went nowhere.</div>
+        <div class="ans">So the exit criteria are agreed before each stage starts, not argued afterwards. <strong>We have named the conditions under which we stop</strong>, including at Phase 1.</div>
+      </div>
+      <div class="qa">
+        <div class="q">Who is accountable when it is wrong?</div>
+        <div class="ans">The control owner owns the control and the decision, unchanged. This team owns model performance and reports it weekly. The split is written down at Phase 1, before any model exists.</div>
+      </div>
+      <div class="qa">
+        <div class="q">What does it cost?</div>
+        <div class="ans">Phases 1 and 2 use existing data, existing infrastructure and this team's current capacity, plus roughly two hours a week from a control SME. No new spend is requested until the Phase 2 gate.</div>
+      </div>
+      <div class="qa">
+        <div class="q">Why two controls rather than one?</div>
+        <div class="ans">They test different propositions. ABC is deterministic, so it tells us whether a reference-data watch is sufficient. Counterparty validation turns on which entity was actually meant, so it tells us whether a model adds anything a rule cannot. <strong>One control tells you whether that control improved; two tell you what the rest of the estate should do.</strong></div>
+      </div>
+      <div class="qa">
+        <div class="q">Will this be treated as a model?</div>
+        <div class="ans">We have assumed yes and proposed to be governed as one from Phase 2, rather than argue the boundary. The assessment is pre-filled in this pack — impact, pervasiveness, explainability, autonomy, profiling — and we will accept whichever tier the assessor applies.</div>
+      </div>
+      <div class="qa">
+        <div class="q">Why not just tune the rules instead?</div>
+        <div class="ans">We should, and Phase 1 will show where. Rule mining and threshold calibration come out of the same baseline. <strong>The two are complementary</strong>: better rules reduce the volume, prediction moves what remains earlier.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sechead">
+      <span class="kicker">Scope &amp; needs</span>
+      <h2>Keep the pilot deliberately small</h2>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <h3>Pilot scope</h3>
+        <ul class="tight">
+          <li><b>ABC — active book check</b>: the deterministic case, testing whether a reference-data watch is enough</li>
+          <li><b>Counterparty validation</b> against ISD: the matching case, testing whether a model earns its place</li>
+          <li>One asset class and one region</li>
+          <li>One exception platform end to end, with the second read-only for cross-platform clustering</li>
+          <li>24 months of historic alerts with dispositions, for both controls</li>
+          <li>Built against the generic stages — every other control out of scope until a gate is passed</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>What we need to start</h3>
+        <ul class="tight">
+          <li>Read access to exception history and disposition codes from Snap Explorer and EPE-XACT</li>
+          <li>BRV alert records for both controls, with rule, timestamp and run type (intraday or EOD)</li>
+          <li>UC trade records from FODS with their creation timestamps</li>
+          <li>ISD counterparty records and their change history, including GRID ID and BERID, point in time</li>
+          <li>Book status change history</li>
+          <li>Around two hours a week from a control SME for each control</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p class="note"><b>About the figures in this pack.</b> Every number on the sample cards is made up as an illustration, and every cell in the baseline table is deliberately empty. Producing the real ones is what Phase 1 is for. Presenting estimates as measurements is the fastest way to lose a control audience.</p>
+  </footer>
+
+</div>
+</body>
+</html>
